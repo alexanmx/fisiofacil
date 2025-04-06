@@ -1,0 +1,124 @@
+# Arquivo .gitignore para projetos Python
+
+# --- Byte-compiled/optimized files ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Arquivos de distribuição / empacotamento ---
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Ambientes Virtuais ---
+# Geralmente nomeados como 'venv', 'env', '.venv', '.env' etc.
+# É crucial não versionar o ambiente virtual. Use requirements.txt ou pyproject.toml.
+venv/
+env/
+.venv/
+.env/
+ENV/
+env.bak/
+venv.bak/
+
+# --- Arquivos de configuração de IDEs/Editores ---
+# PyCharm
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.sw[nop]
+*~
+*.swo
+*.swp
+
+# Emacs
+*#
+#*#
+
+# --- Arquivos de Teste e Cobertura ---
+*.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+pytestdebug.log
+
+# --- Arquivos de Banco de Dados ---
+# Exemplo: bancos de dados SQLite locais. Ajuste conforme necessário.
+*.sqlite
+*.sqlite3
+db.sqlite3
+# Se você usa Migrations (Django/Alembic), ignore o banco local,
+# mas versiona os arquivos de migração.
+
+# --- Arquivos de Log ---
+*.log
+logs/
+
+# --- Arquivos de Sistema Operacional ---
+# macOS
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# --- Jupyter Notebook ---
+.ipynb_checkpoints
+
+# --- Arquivos de Configuração Sensíveis ---
+# Nunca versione arquivos com senhas, chaves de API, etc.
+# Use variáveis de ambiente ou arquivos de configuração *não versionados*.
+# É comum versionar um arquivo de exemplo (ex: .env.example).
+.env
+.env.*
+!*.env.example # Não ignore o arquivo de exemplo
+
+# --- Artefatos Específicos de Frameworks (Exemplos) ---
+# Django
+*.mo # Arquivos de tradução compilados
+*.pot # Arquivos de template de tradução
+# static_collected/ # Diretório de arquivos estáticos coletados (opcional)
+
+# Flask
+instance/ # Diretório de instância do Flask (pode conter config/db)
+
+# --- Outros ---
+# Arquivos temporários ou específicos de bibliotecas
+# Adicione aqui outros padrões conforme a necessidade do seu projeto.
+# Exemplo:
+# my_temp_files/
+# *.tmp
