@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% load static %} {% block titulo %}Fale Conosco{% endblock %}
+
+{% block conteudo %}
+    <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+        <img src="{% static 'images/terapia.jpg' %}" width="350px" alt="Serviços de Fisioterapia">
+        <h1 class="display-5 fw-normal text-info-emphasis">Serviços de Fisioterapia</h1>
+        <p class="fs-5 text-body-secondary">Entre em contato hoje mesmo e tire todas as suas dúvidas através do nosso 
+            WhatsApp.</p>
+
+        <a href="/agendamentos/" class="btn btn-success"><i class="bi bi-whatsapp"></i> WhatsApp</a>
+    </div>
+{% endblock %}
