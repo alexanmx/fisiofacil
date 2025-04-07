@@ -3,19 +3,33 @@
 {% block titulo %}Serviços Ativos{% endblock %}
 
 {% block conteudo %}
-    <h1 class="text-success-emphasis my-5"><i class="bi bi-boxes"></i> Serviços Disponíveis</h1>
 
-    <div class="row row-cols-1 row-cols-md-2 g-2">
+<div class="container menu-secondary">
+    {% include 'menu.html' %}
+</div>
+
+<div class="container text-center mt-5">
+    <h1 class="text-color text-center f700">Serviços</h1>
+    <p class="second-text-color">Melhore sua qualidade de vida e eleve seu bem-estar.</p>
+
+    <div class="row row-cols-1 row-cols-md-3 g-3 mt-5">
         {% for servico in servicos_ativos.results %}
         <div class="col">
-            <div class="card h-100 text-center shadow">
+            <div class="card h-100 text-center">
+                <div class="card-header py-4 success-color d-inline-flex align-items-center justify-content-center">
+                    <div class="rounded-circle bg-white text-dark d-inline-flex align-items-center justify-content-center me-2"
+                        style="width:50px; height: 50px;">
+                        <i class="bi bi-people h5 second-text-color py-0 my-0"></i>
+                    </div>
+                    <span class="f700">{{ servico.servico_nome }}</span>
+                </div>
                 <div class="card-body">
-                    <h5 class="card-title">{{ servico.servico_nome }}</h5>
-                    <p class="card-text">Profissional: {{ servico.profissional_nome }}</p>
-                    <a href="/agendamentos/" class="btn btn-success">Agendar</a>
+                    <p class="second-text-color f600">{{ servico.servico_desc }}</p>
+                    <a href="/agendamentos/" class="link-success">Agendar uma consulta</a>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
+</div>
 {% endblock %}

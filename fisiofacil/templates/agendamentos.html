@@ -3,12 +3,19 @@
 {% block titulo %}Agendar Serviço{% endblock %}
 
 {% block conteudo %}
-<div class="container">
-    <h1 class="text-success-emphasis my-5"><i class="bi bi-calendar-week"></i> Agendar Serviços</h1>
+<div class="container menu-secondary">
+    {% include 'menu.html' %}
+</div>
 
-    <form id="agendamento-form" class="row g-3">
+<div class="container text-center mt-5">
+    <h1 class="text-color text-center f700">Agendamento</h1>
+    <p class="second-text-color">Agende sua consulta.</p>
+</div>
+
+<div class="container mt-5">
+    <form id="agendamento-form" class="row g-5 mx-5">
         <div class="col-md-10">
-            <label for="profissional_servico" class="form-label">Profissional/Serviço:</label>
+            <label for="profissional_servico" class="form-label">Serviço*</label>
             <select name="profissional_servico" id="profissional_servico" class="form-select">
                 {% for ps in profissional_servicos %}
                 <option value="{{ ps.id }}">{{ ps.profissional.nome }} - {{ ps.servico.nome }}</option>
@@ -16,28 +23,24 @@
             </select>
         </div>
         <div class="col-md-5">
-            <label for="data" class="form-label">Data:</label>
+            <label for="data" class="form-label">Data*</label>
             <input type="date" name="data" id="data" class="form-control">
         </div>
         <div class="col-md-5">
-            <label for="hora" class="form-label">Hora:</label>
+            <label for="hora" class="form-label">Horário*</label>
             <input type="time" name="hora" id="hora" class="form-control">
         </div>
         <div class="col-md-10">
-            <label for="cliente_nome" class="form-label">Nome do Cliente:</label>
+            <label for="cliente_nome" class="form-label">Nome*</label>
             <input type="text" name="cliente_nome" id="cliente_nome" class="form-control">
         </div>
         <div class="col-md-3">
-            <label for="cliente_telefone" class="form-label">Telefone do Cliente:</label>
+            <label for="cliente_telefone" class="form-label">Telefone*</label>
             <input type="text" name="cliente_telefone" id="cliente_telefone" class="form-control">
         </div>
         <div class="col-md-7">
-            <label for="cliente_email" class="form-label">Email do Cliente:</label>
+            <label for="cliente_email" class="form-label">Email*</label>
             <input type="email" name="cliente_email" id="cliente_email" class="form-control">
-        </div>
-        <div class="col-md-8">
-            <label for="observacoes" class="form-label">Observações:</label>
-            <textarea name="observacoes" id="observacoes" class="form-control"></textarea>
         </div>
         <div class="col-12">
             <button type="submit" class="btn btn-success">Agendar</button>
