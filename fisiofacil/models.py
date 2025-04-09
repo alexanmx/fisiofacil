@@ -29,15 +29,26 @@ class ProfissionalServico(models.Model):
 
     def __str__(self):
         return f"{self.profissional.nome} - {self.servico.nome} - {self.status}"
+    
+class Cliente(models.Model):
+    nome = models.CharField(max_length=100)
+    email = models.EmailField()
+    telefone = models.CharField(max_length=20)
+    cpf = models.CharField(max_length=14, unique=True)
+    data_nascimento = models.DateField()
+
+    def __str__(self):
+        return f"{self.nome} - {self.cpf}"
+
 
 class Agendamento(models.Model):
     profissional_servico = models.ForeignKey(ProfissionalServico, on_delete=models.CASCADE)
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     data = models.DateField(default=datetime.date.today)
-    hora = models.TimeField(default=datetime.time(0,0))
-    cliente_nome = models.CharField(max_length=100)
-    cliente_email = models.EmailField()
-    cliente_telefone = models.CharField(max_length=20)
+    hora = models.TimeField(default=datetime.time(0, 0))
     observacoes = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.profissional_servico} - {self.data} {self.hora}"
+        return f"{self.cliente.nome} - {self.data} {self.hora} - {self.profissional_servico}"
+
+    
