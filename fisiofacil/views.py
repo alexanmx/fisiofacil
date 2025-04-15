@@ -103,3 +103,43 @@ def contato(request):
     }
 
     return render(request, 'contato.html', context)
+
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.contrib.auth import authenticate, login
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.contrib.auth.models import User  # Importe o modelo User padrão
+from django.contrib import messages
+
+@csrf_exempt
+def login_view(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            login_data = data.get('login')
+            password = data.get('password')
+
+            if not login_data or not password:
+                return JsonResponse({'error': 'Por favor, forneça login e senha.'}, status=400)
+
+            user = authenticate(request, username=login_data, password=password)
+
+            if user is not None:
+                login(request, user)
+                return JsonResponse({'success': 'Login efetuado com sucesso.'})
+            else:
+                return JsonResponse({'error': 'Credenciais inválidas.'}, status=401)
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Dados inválidos no corpo da requisição.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': f'Ocorreu um erro: {str(e)}'}, status=500)
+    else:
+        return render(request, 'login.html')
+
+def logout_view(request):
+    from django.contrib.auth import logout
+    logout(request)
+    messages.success(request, 'Logout realizado com sucesso.')
+    return redirect('index') # Redirecione para a página inicial ou outra página desejada

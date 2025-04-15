@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Login{% endblock %}
+
+{% block conteudo %}
+<div class="container menu-secondary">
+    {% include 'menu.html' %}
+</div>
+
+<div class="container text-center mt-5">
+    <h1 class="text-color text-center f700">Login</h1>
+    <p class="second-text-color">Forneça suas credencias ou cadastre-se.</p>
+
+    <div class="row row-cols-1 row-cols-md-3 g-2 mt-5">
+        <main class="form-signin w-100 m-auto" style="max-width: 350px;">
+            <form id="login-form">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="floatingInput" name="login" placeholder="Login">
+                <label for="floatingInput">Login</label>
+              </div>
+              <div class="form-floating">
+                <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password">
+                <label for="floatingPassword">Senha</label>
+              </div>
+          
+              <button class="btn btn-primary w-100 py-2 mt-2" type="submit">Login</button>
+            </form>
+          </main>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('login-form');
+
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => data[key] = value);
+
+        fetch('/api/login/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => { throw new Error(JSON.stringify(errorData)); });
+                }
+                return response.json();
+            })
+            .then(result => {
+                console.log('Login efetuado:', result);
+                alert('Login realizado com sucesso!');
+                form.reset();
+            })
+            .catch(error => {
+                console.error('Erro ao realizar o login:', error);
+                alert('Erro ao realizar o login.');
+                try {
+                    const errorData = JSON.parse(error.message);
+                    console.log('Detalhes do erro:', errorData);
+                } catch (e) {
+                    console.log('Erro ao realizar o login:', e);
+                }
+            });
+    });
+</script>
+{% endblock %}
