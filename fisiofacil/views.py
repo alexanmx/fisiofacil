@@ -142,4 +142,7 @@ def logout_view(request):
     from django.contrib.auth import logout
     logout(request)
     messages.success(request, 'Logout realizado com sucesso.')
-    return redirect('index') # Redirecione para a página inicial ou outra página desejada
+    return redirect('index')
+
+def cadastrar(request):
+    return render(request, 'cadastrar.html')

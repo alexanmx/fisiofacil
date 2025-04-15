@@ -15,9 +15,10 @@
             <a class="me-3 py-2 text-decoration-none menu-item btn btn-success f700" href="/agendamentos/">Agendar agora <i class="bi bi-arrow-right"></i></a>
 
             {% if user.is_authenticated %}
-            Olá, {{ user.nome }}! <a class="me-3 py-2 text-decoration-none menu-item btn btn-success f700" href="/logout/">Sair</a>{% else %}
-            <a  class="me-3 py-2 text-decoration-none menu-item btn btn-info f700" href="/login/">Login</a>
-        {% endif %}
+                Olá, {{ user.nome }}! <a class="me-3 py-2 text-decoration-none menu-item btn btn-success f700" href="/logout/">Sair</a>
+            {% else %}
+                <a  class="me-3 py-2 text-decoration-none menu-item btn btn-info f700" href="/login/">Login</a>
+            {% endif %}
         </nav>
     </div>
 </div>

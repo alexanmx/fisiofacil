@@ -30,18 +30,22 @@
             <label for="hora" class="form-label">Horário*</label>
             <input type="time" name="hora" id="hora" class="form-control">
         </div>
-        <div class="col-md-10">
-            <label for="cliente_nome" class="form-label">Nome*</label>
-            <input type="text" name="cliente_nome" id="cliente_nome" class="form-control">
-        </div>
-        <div class="col-md-3">
-            <label for="cliente_telefone" class="form-label">Telefone*</label>
-            <input type="text" name="cliente_telefone" id="cliente_telefone" class="form-control">
-        </div>
-        <div class="col-md-7">
-            <label for="cliente_email" class="form-label">Email*</label>
-            <input type="email" name="cliente_email" id="cliente_email" class="form-control">
-        </div>
+        {% if user.is_authenticated %}
+        
+        {% else %}
+            <div class="col-md-10">
+                <label for="cliente_nome" class="form-label">Nome*</label>
+                <input type="text" name="cliente_nome" id="cliente_nome" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <label for="cliente_telefone" class="form-label">Telefone*</label>
+                <input type="text" name="cliente_telefone" id="cliente_telefone" class="form-control">
+            </div>
+            <div class="col-md-7">
+                <label for="cliente_email" class="form-label">Email*</label>
+                <input type="email" name="cliente_email" id="cliente_email" class="form-control">
+            </div>
+        {% endif %}
         <div class="col-12">
             <button type="submit" class="btn btn-success">Agendar</button>
         </div>
