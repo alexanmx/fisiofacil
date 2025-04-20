@@ -12,6 +12,9 @@ router.register(r'profissional-servicos', views.ProfissionalServicoViewSet)
 router.register(r'profissional-servicos-detalhado', views.ProfissionalServicoDetalhadoViewSet, basename='profissional-servicos-detalhado')
 router.register(r'profissional-servicos-ativos', views.ProfissionalServicoAtivoViewSet, basename='profissional-servicos-ativos')
 router.register(r'agendamentos', views.AgendamentoViewSet)
+router.register(r'clientes', views.ClienteViewSet)
+router.register(r'prontuarios', views.ProntuarioViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),

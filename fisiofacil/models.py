@@ -42,13 +42,26 @@ class Cliente(models.Model):
 
 
 class Agendamento(models.Model):
-    profissional_servico = models.ForeignKey(ProfissionalServico, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
-    data = models.DateField(default=datetime.date.today)
-    hora = models.TimeField(default=datetime.time(0, 0))
-    observacoes = models.TextField(blank=True, null=True)
+    profissional_servico = models.ForeignKey(ProfissionalServico, on_delete=models.CASCADE)
+    data = models.DateField()
+    hora = models.TimeField()
+    criado_em = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.cliente.nome} - {self.data} {self.hora} - {self.profissional_servico}"
+       return f"{self.cliente.nome} - {self.data} {self.hora} - {self.profissional_servico}"
+    
+
+
+
+
 
     
+class Prontuario(models.Model):
+    agendamento = models.OneToOneField(Agendamento, on_delete=models.CASCADE)
+    observacoes = models.TextField()
+    consulta_emergencial = models.BooleanField(default=False)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Prontuário de {self.agendamento.cliente.nome} em {self.agendamento.data}"

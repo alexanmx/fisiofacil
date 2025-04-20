@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from .models import Profissional, Servico, ProfissionalServico, Agendamento
+from .models import Profissional, Servico, ProfissionalServico, Agendamento, Cliente, Prontuario
 
 class ProfissionalSerializer(serializers.ModelSerializer):
     class Meta:
@@ -61,4 +61,16 @@ class AgendamentoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Agendamento
+        fields = '__all__'
+
+
+
+class ClienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cliente
+        fields = '__all__'
+
+class ProntuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prontuario
         fields = '__all__'
