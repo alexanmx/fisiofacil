@@ -1,8 +1,8 @@
 from rest_framework import viewsets, pagination
 import requests
 from django.shortcuts import render, redirect
-from .models import Profissional, Servico, ProfissionalServico, Agendamento
-from .serializers import ProfissionalSerializer, ServicoSerializer, ProfissionalServicoSerializer, ProfissionalServicoDetalhadoSerializer, AgendamentoSerializer
+from .models import Profissional, Servico, ProfissionalServico, Agendamento,Cliente, Prontuario
+from .serializers import ProfissionalSerializer, ServicoSerializer, ProfissionalServicoSerializer, ProfissionalServicoDetalhadoSerializer, AgendamentoSerializer, ProntuarioSerializer, ClienteSerializer
 from .forms import AgendamentoForm
 
 class ProfissionalViewSet(viewsets.ModelViewSet):
@@ -103,3 +103,12 @@ def contato(request):
     }
 
     return render(request, 'contato.html', context)
+
+
+class ClienteViewSet(viewsets.ModelViewSet):
+    queryset = Cliente.objects.all()
+    serializer_class = ClienteSerializer
+
+class ProntuarioViewSet(viewsets.ModelViewSet):
+    queryset = Prontuario.objects.all()
+    serializer_class = ProntuarioSerializer
