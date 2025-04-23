@@ -3,6 +3,7 @@ from django.urls import path, include
 from rest_framework import routers
 from fisiofacil import views
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from fisiofacil.views import DeletarAgendamentoView
 
 
 router = routers.DefaultRouter()
@@ -18,9 +19,10 @@ router.register(r'prontuarios', views.ProntuarioViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("api/agendamentos/delete/", DeletarAgendamentoView.as_view(), name="agendamento-delete"),  # Mova para cá
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # rota de login
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # refresh do token
-    path('', include('fisiofacil.urls'))
+    path('', include('fisiofacil.urls')),
 ]

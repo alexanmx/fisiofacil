@@ -40,6 +40,9 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         queryset=ProfissionalServico.objects.filter(status=True)
     )
     
+    # Recebe o CPF para associar ao cliente
+    cpf = serializers.CharField(write_only=True)
+
     def validate(self, data):
         hora = data['hora']
         profissional_servico = data['profissional_servico']
@@ -48,6 +51,7 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         if hora.minute != 0:
             raise ValidationError("Os horários de agendamento devem ser horas inteiras.")
 
+        # Verifica se há conflitos de horário
         conflitos = Agendamento.objects.filter(
             profissional_servico=profissional_servico,
             data=data_agendamento,
@@ -59,9 +63,23 @@ class AgendamentoSerializer(serializers.ModelSerializer):
 
         return data
 
+    def create(self, validated_data):
+        # Obtemos o CPF do cliente que vem na requisição
+        cpf = validated_data.pop('cpf')
+
+        # Verificamos se o cliente já existe no sistema
+        try:
+            cliente = Cliente.objects.get(cpf=cpf)
+        except Cliente.DoesNotExist:
+            raise ValidationError("Cliente não encontrado com o CPF fornecido.")
+
+        # Agora associamos o cliente ao agendamento
+        agendamento = Agendamento.objects.create(cliente=cliente, **validated_data)
+        return agendamento
+
     class Meta:
         model = Agendamento
-        fields = '__all__'
+        fields = ['cpf', 'profissional_servico', 'data', 'hora', 'criado_em']
 
 
 
