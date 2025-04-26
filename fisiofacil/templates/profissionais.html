@@ -3,19 +3,25 @@
 {% block titulo %}Lista de Profissionais{% endblock %}
 
 {% block conteudo %}
-    <h1 class="text-success-emphasis my-5"><i class="bi bi-people"></i> Profissionais</h1>
+<div class="container menu-secondary">
+    {% include 'menu.html' %}
+</div>
 
-    <div class="row row-cols-1 row-cols-md-2 g-2">
+<div class="container text-center mt-5">
+    <h1 class="text-color text-center f700">Profissionais</h1>
+    <p class="second-text-color">Conheça nossa equipe de profissionais.</p>
+
+    <div class="row row-cols-1 row-cols-md-3 g-2 mt-5">
         {% for profissional in profissional %}
         <div class="col">
-            <div class="card h-100 shadow">
+            <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-person-vcard"></i> {{ profissional.nome }}</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">{{ profissional.cargo }}</h6>
-                    <p class="card-text">{{ profissional.email }}</p>
+                    <h5 class="card-title text-color f700"><i class="bi bi-person-vcard"></i> {{ profissional.nome }}</h5>
+                    <p class="f600 second-text-color">{{ profissional.nome }}</p>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
+</div>
 {% endblock %}

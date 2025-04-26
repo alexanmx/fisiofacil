@@ -15,6 +15,7 @@ class ServicoSerializer(serializers.ModelSerializer):
 class ProfissionalServicoSerializer(serializers.ModelSerializer):
     profissional_nome = serializers.SerializerMethodField()
     servico_nome = serializers.SerializerMethodField()
+    servico_desc = serializers.SerializerMethodField()
 
     class Meta:
         model = ProfissionalServico
@@ -26,14 +27,18 @@ class ProfissionalServicoSerializer(serializers.ModelSerializer):
     def get_servico_nome(self, obj):
         return obj.servico.nome
     
+    def get_servico_desc(self, obj):
+        return obj.servico.descricao
+    
 class ProfissionalServicoDetalhadoSerializer(serializers.ModelSerializer):
     profissional_nome = serializers.CharField(source='profissional.nome', read_only=True)
     servico_nome = serializers.CharField(source='servico.nome', read_only=True)
+    servico_desc = serializers.CharField(source='servico.descricao', read_only=True)
     servico_valor = serializers.DecimalField(source='servico.valor', max_digits=10, decimal_places=2, read_only=True)
 
     class Meta:
         model = ProfissionalServico
-        fields = ['id', 'profissional_nome', 'servico_nome', 'servico_valor', 'data_inicio', 'data_fim', 'taxa', 'status']
+        fields = ['id', 'profissional_nome', 'servico_nome', 'servico_desc', 'servico_valor', 'data_inicio', 'data_fim', 'taxa', 'status']
 
 class AgendamentoSerializer(serializers.ModelSerializer):
     profissional_servico = serializers.PrimaryKeyRelatedField(
