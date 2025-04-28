@@ -1,11 +1,40 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from .models import Profissional, Servico, ProfissionalServico, Agendamento, Cliente, Prontuario
+from django.contrib.auth.models import User
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'id': {'read_only': True},
+        }
+
+    def create(self, validated_data):
+        # use create_user para garantir hashing da senha
+        return User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password']
+        )
 
 class ProfissionalSerializer(serializers.ModelSerializer):
+    usuario = UsuarioSerializer()
+
     class Meta:
         model = Profissional
-        fields = '__all__'
+        fields = ['id', 'nome', 'email', 'telefone',
+                  'cpf', 'data_nascimento', 'especialidade', 'usuario']
+
+    def create(self, validated_data):
+        # retira os dados de usuário para criar primeiro o User
+        usuario_data = validated_data.pop('usuario')
+        user = UsuarioSerializer().create(usuario_data)
+
+        # agora cria o Profissional referenciando o user
+        profissional = Profissional.objects.create(usuario=user, **validated_data)
+        return profissional
 
 class ServicoSerializer(serializers.ModelSerializer):
     class Meta:

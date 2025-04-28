@@ -8,6 +8,9 @@ from django.shortcuts import render, redirect
 from .models import Profissional, Servico, ProfissionalServico, Agendamento,Cliente, Prontuario
 from .serializers import ProfissionalSerializer, ServicoSerializer, ProfissionalServicoSerializer, ProfissionalServicoDetalhadoSerializer, AgendamentoSerializer, ProntuarioSerializer, ClienteSerializer
 from .forms import AgendamentoForm
+from .permissions import IsProfissionalOrAdmin
+from rest_framework.permissions import AllowAny
+from .permissions import IsAuthenticatedAndNoDelete
 
 class ProfissionalViewSet(viewsets.ModelViewSet):
     queryset = Profissional.objects.all()
@@ -42,50 +45,60 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
     queryset = Agendamento.objects.all()
     serializer_class = AgendamentoSerializer
 
-    # Criação de agendamento via CPF
+    def get_permissions(self):
+        if self.action in ['create', 'list']:
+            return [AllowAny()]  # Cliente pode criar e listar sem login
+        return [IsProfissionalOrAdmin()]  # Outras ações precisam de login
+
     def create(self, request, *args, **kwargs):
-        cpf = request.data.get('cpf')
-        data_agendamento = request.data.get('data')
-        hora_agendamento = request.data.get('hora')
+        # Se for cliente (sem autenticação), usa o fluxo de CPF
+        if not request.user.is_authenticated:
+            cpf = request.data.get('cpf')
+            data_agendamento = request.data.get('data')
+            hora_agendamento = request.data.get('hora')
 
-        if not cpf or not data_agendamento or not hora_agendamento:
-            return Response({"detail": "CPF, data e hora são necessários."}, status=status.HTTP_400_BAD_REQUEST)
+            if not cpf or not data_agendamento or not hora_agendamento:
+                return Response({"detail": "CPF, data e hora são necessários."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Busca o cliente pelo CPF
-        try:
-            cliente = Cliente.objects.get(cpf=cpf)
-        except Cliente.DoesNotExist:
-            return Response({"detail": "Cliente não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+            try:
+                cliente = Cliente.objects.get(cpf=cpf)
+            except Cliente.DoesNotExist:
+                return Response({"detail": "Cliente não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Verifica se o agendamento já existe para essa data e hora
-        if Agendamento.objects.filter(cliente=cliente, data=data_agendamento, hora=hora_agendamento).exists():
-            return Response({"detail": "Já existe um agendamento para essa data e hora."}, status=status.HTTP_400_BAD_REQUEST)
+            if Agendamento.objects.filter(cliente=cliente, data=data_agendamento, hora=hora_agendamento).exists():
+                return Response({"detail": "Já existe um agendamento para essa data e hora."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Criação do agendamento
-        profissional_servico_id = request.data.get('profissional_servico')
-        try:
-            profissional_servico = ProfissionalServico.objects.get(id=profissional_servico_id)
-        except ProfissionalServico.DoesNotExist:
-            return Response({"detail": "Profissional e serviço não encontrados."}, status=status.HTTP_404_NOT_FOUND)
+            profissional_servico_id = request.data.get('profissional_servico')
+            try:
+                profissional_servico = ProfissionalServico.objects.get(id=profissional_servico_id)
+            except ProfissionalServico.DoesNotExist:
+                return Response({"detail": "Profissional e serviço não encontrados."}, status=status.HTTP_404_NOT_FOUND)
 
-        agendamento = Agendamento(cliente=cliente, profissional_servico=profissional_servico, data=data_agendamento, hora=hora_agendamento)
-        agendamento.save()
+            agendamento = Agendamento(cliente=cliente, profissional_servico=profissional_servico, data=data_agendamento, hora=hora_agendamento)
+            agendamento.save()
 
-        return Response({"detail": "Agendamento criado com sucesso!"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Agendamento criado com sucesso!"}, status=status.HTTP_201_CREATED)
+        
+        # Se for profissional logado, usa o comportamento normal
+        return super().create(request, *args, **kwargs)
 
-    # Listagem de agendamentos apenas para o cliente via CPF
     def list(self, request, *args, **kwargs):
-        cpf = request.query_params.get('cpf')
+        if not request.user.is_authenticated:
+            cpf = request.query_params.get('cpf')
 
-        if not cpf:
-            return Response({"detail": "CPF é necessário para consulta."}, status=status.HTTP_400_BAD_REQUEST)
+            if not cpf:
+                return Response({"detail": "CPF é necessário para consulta."}, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            cliente = Cliente.objects.get(cpf=cpf)
-        except Cliente.DoesNotExist:
-            return Response({"detail": "Cliente não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+            try:
+                cliente = Cliente.objects.get(cpf=cpf)
+            except Cliente.DoesNotExist:
+                return Response({"detail": "Cliente não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
-        queryset = Agendamento.objects.filter(cliente=cliente)
+            queryset = Agendamento.objects.filter(cliente=cliente)
+        else:
+            # Profissional logado ou admin pode ver todos
+            queryset = self.queryset
+
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -186,6 +199,8 @@ class ClienteViewSet(viewsets.ModelViewSet):
 class ProntuarioViewSet(viewsets.ModelViewSet):
     queryset = Prontuario.objects.all()
     serializer_class = ProntuarioSerializer
+    permission_classes = [IsAuthenticatedAndNoDelete]
+
 
 
 class DeletarAgendamentoView(APIView):
