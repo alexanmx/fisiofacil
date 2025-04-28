@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Login{% endblock %}
+
+{% block conteudo %}
+<div class="container menu-secondary">
+    {% include 'menu.html' %}
+</div>
+
+<div class="container text-center mt-5">
+    <h1 class="text-color text-center f700">Cadastre-se</h1>
+    <p class="second-text-color">Já possui cadastro? Faça seu login <a href="/login/">aqui</a>.</p>
+
+    <div class="row row-cols-1 row-cols-md-3 g-2 mt-5">
+        <main class="form-signin w-100 m-auto" style="max-width: 350px;">
+            <form id="login-form">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Nome">
+                    <label for="floatingInput">Nome</label>
+                </div>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="floatingInput" name="login" placeholder="Login">
+                    <label for="floatingInput">Login</label>
+                </div>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="floatingInputTel" name="telefone" placeholder="Telefone">
+                    <label for="floatingInputTel">Telefone</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="floatingPassword" name="password"
+                        placeholder="Password">
+                    <label for="floatingPassword">Senha</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="floatingPassword"2 name="password2"
+                        placeholder="Password">
+                    <label for="floatingPassword2">Repetir Senha</label>
+                </div>
+
+                <button class="btn btn-primary w-100 py-2 mt-2" type="submit">Cadastrar</button>
+            </form>
+        </main>
+    </div>
+</div>
+{% endblock %}
