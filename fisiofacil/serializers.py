@@ -68,8 +68,6 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         model = Agendamento
         fields = '__all__'
 
-
-
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente

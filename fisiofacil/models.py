@@ -40,7 +40,6 @@ class Cliente(models.Model):
     def __str__(self):
         return f"{self.nome} - {self.cpf}"
 
-
 class Agendamento(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     profissional_servico = models.ForeignKey(ProfissionalServico, on_delete=models.CASCADE)
@@ -50,13 +49,7 @@ class Agendamento(models.Model):
 
     def __str__(self):
        return f"{self.cliente.nome} - {self.data} {self.hora} - {self.profissional_servico}"
-    
 
-
-
-
-
-    
 class Prontuario(models.Model):
     agendamento = models.OneToOneField(Agendamento, on_delete=models.CASCADE)
     observacoes = models.TextField()

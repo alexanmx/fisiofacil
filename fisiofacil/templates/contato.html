@@ -1,14 +1,79 @@
 {% extends 'base.html' %}
 
-{% load static %} {% block titulo %}Fale Conosco{% endblock %}
+{% block titulo %}Login{% endblock %}
 
 {% block conteudo %}
-    <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-        <img src="{% static 'images/terapia.jpg' %}" width="350px" alt="Serviços de Fisioterapia">
-        <h1 class="display-5 fw-normal text-info-emphasis">Serviços de Fisioterapia</h1>
-        <p class="fs-5 text-body-secondary">Entre em contato hoje mesmo e tire todas as suas dúvidas através do nosso 
-            WhatsApp.</p>
+<div class="container-xxl text-center mt-lg-4 mt-2 mb-5">
+    <h1 class="text-color text-center f700 pt-3">Contate-nos</h1>
+    <p>Alguma dúvida? Nos mande uma mensagem!</p>
 
-        <a href="/agendamentos/" class="btn btn-success"><i class="bi bi-whatsapp"></i> WhatsApp</a>
+    <div class="row">
+
+        <div class="col-lg-6">
+            <div class="card border-black border-3 position-relative">
+                <div class="card-header border-black border-3 bg-success-subtle text-end py-3">
+                    <i class="bi bi-dash text-color f700"></i>
+                    <i class="bi bi-square text-color f700"></i>
+                    <i class="bi bi-x-lg text-color f700"></i>
+                </div>
+                <div class="card-body px-5">
+                    <form>
+                        <div class="row mb-3">
+                            <label for="nome" class="col-sm-3 col-form-label text-start f600">Nome</label>
+                            <div class="col-sm-9">
+                                <input type="email" class="form-control py-3" id="nome" placeholder="Nome completo">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="email" class="col-sm-3 col-form-label text-start f600">E-mail</label>
+                            <div class="col-sm-9">
+                                <input type="email" class="form-control py-3" id="email"
+                                    placeholder="exemplo@exemplo.com">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="telefone" class="col-sm-3 col-form-label text-start f600">Telefone</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control py-3" id="telefone" placeholder="(99)99999-9999">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="mensagem" class="col-sm-3 col-form-label text-start f600">Mensagem</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" placeholder="Escreva sua mensagem" id="mensagem"
+                                    style="height: 100px"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn bg-success-subtle text-color f600">Enviar</button>
+                    </form>
+                    <img src="/static/images/woman.png" class="woman" alt="Imagem de contato" class="img-fluid mt-4">
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 d-lg-flex flex-column align-items-lg-end justify-content-lg-end mt-5">
+            <div class="icons-address text-start" style="max-width:350px;">
+            <div class="row">
+                <div class="col-1 h4"><i class="bi bi-telephone-fill"></i></div>
+                <div class="col-11">(11)1234567890</div>
+            </div>
+            <div class="row">
+                <div class="col-1 h4"><i class="bi bi-envelope"></i></div>
+                <div class="col-11">exemplo@gmail.com</div>
+            </div>
+            <div class="row">
+                <div class="col-1 h4"><i class="bi bi-pin-angle-fill"></i></div>
+                <div class="col-11">Rua Exemplo, 123 - Bairro - Cidade - Estado</div>
+            </div>
+            <div class="row">
+                <div class="col-12 h3 pt-4 text-lg-center text-start text-success-icons">
+                    <i class="bi bi-whatsapp pe-3"></i>
+                    <i class="bi bi-instagram pe-3"></i>
+                    <i class="bi bi-facebook pe-3"></i>
+                    <i class="bi bi-twitter"></i>
+                </div>
+            </div>
+        </div>
+        </div>
     </div>
+</div>
 {% endblock %}

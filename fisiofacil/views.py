@@ -4,6 +4,13 @@ from django.shortcuts import render, redirect
 from .models import Profissional, Servico, ProfissionalServico, Agendamento,Cliente, Prontuario
 from .serializers import ProfissionalSerializer, ServicoSerializer, ProfissionalServicoSerializer, ProfissionalServicoDetalhadoSerializer, AgendamentoSerializer, ProntuarioSerializer, ClienteSerializer
 from .forms import AgendamentoForm
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.contrib.auth import authenticate, login
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.contrib.auth.models import User
+from django.contrib import messages
 
 class ProfissionalViewSet(viewsets.ModelViewSet):
     queryset = Profissional.objects.all()
@@ -39,6 +46,16 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
     queryset = Agendamento.objects.all()
     serializer_class = AgendamentoSerializer
 
+class ClienteViewSet(viewsets.ModelViewSet):
+    queryset = Cliente.objects.all()
+    serializer_class = ClienteSerializer
+
+class ProntuarioViewSet(viewsets.ModelViewSet):
+    queryset = Prontuario.objects.all()
+    serializer_class = ProntuarioSerializer
+
+
+# views públicas
 def index(request):
     api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/?limit=3'
     response = requests.get(api_url)
@@ -53,20 +70,6 @@ def index(request):
     }
 
     return render(request, 'index.html', context)
-
-def profissionais(request):
-    api_url = 'http://127.0.0.1:8000/api/profissionais/'
-    response = requests.get(api_url)
-
-    if response.status_code == 200:
-        profissionais = response.json()
-    else:
-        profissionais = []
-
-    context = {
-        'profissionais': profissionais,
-    }
-    return render(request, 'profissionais.html', context)
 
 
 def servicos(request):
@@ -85,42 +88,24 @@ def servicos(request):
     return render(request, 'servicos.html', context)
 
 
-def agendamentos(request):
-    profissional_servicos = ProfissionalServico.objects.filter(status=True)
-    return render(request, 'agendamentos.html', {'profissional_servicos': profissional_servicos})
-
 def contato(request):
-    api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/'
+    return render(request, 'contato.html')
+
+
+def profissionais(request):
+    api_url = 'http://127.0.0.1:8000/api/profissionais/'
     response = requests.get(api_url)
 
     if response.status_code == 200:
-        servicos_ativos = response.json()
+        profissionais = response.json()
     else:
-        servicos_ativos = []
+        profissionais = []
 
     context = {
-        'servicos_ativos': servicos_ativos,
+        'profissionais': profissionais,
     }
+    return render(request, 'profissionais.html', context)
 
-    return render(request, 'contato.html', context)
-
-
-class ClienteViewSet(viewsets.ModelViewSet):
-    queryset = Cliente.objects.all()
-    serializer_class = ClienteSerializer
-
-class ProntuarioViewSet(viewsets.ModelViewSet):
-    queryset = Prontuario.objects.all()
-    serializer_class = ProntuarioSerializer
-
-
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.contrib.auth import authenticate, login
-from django.views.decorators.csrf import csrf_exempt
-import json
-from django.contrib.auth.models import User
-from django.contrib import messages
 
 @csrf_exempt
 def login_view(request):
@@ -148,11 +133,26 @@ def login_view(request):
     else:
         return render(request, 'login.html')
 
+
 def logout_view(request):
     from django.contrib.auth import logout
     logout(request)
     messages.success(request, 'Logout realizado com sucesso.')
     return redirect('index')
+    
 
-def cadastrar(request):
-    return render(request, 'cadastrar.html')
+def agendar(request):
+    profissional_servicos = ProfissionalServico.objects.filter(status=True)
+    return render(request, 'agendar.html', {'profissional_servicos': profissional_servicos})
+
+
+# views administrativas
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+# @login_required
+def indexAdm(request):
+    return render(request, 'profissional_index.html')
+
+def agendamentosAdm(request):
+    return render(request, 'profissional_agendamentos.html')

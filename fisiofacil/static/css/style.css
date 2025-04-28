@@ -1,0 +1,242 @@
+/* GLOBAL */
+body {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.btn-success {
+  background-color: #8bcf24;
+  border-color: #8bcf24;
+}
+
+.btn-success:hover {
+  background-color: #7bbf24;
+  border-color: #7bbf24;
+}
+
+.btn-success-bold {
+    background-color: #64985F;
+    border-color: #64985F;
+  }
+  
+  .btn-success-bold:hover {
+    background-color: #578453;
+    border-color: #578453;
+  }
+
+footer{
+  background-color: #fafafa;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.dark {
+  background-color: #ced3d0;
+}
+
+.dark footer {
+    background-color: #ced3d0;
+}
+
+.text-color {
+  color: #252b42;
+}
+
+.second-text-color {
+  color: #737373;
+}
+
+.f600 {
+  font-weight: 600;
+}
+
+.f700 {
+  font-weight: 700;
+}
+
+.success-color {
+  background-color: #2dc071;
+  color: #ffffff;
+}
+.link-success {
+  color: #40bb15 !important;
+  text-decoration: none;
+}
+
+.link-success:hover {
+  color: #308511 !important;
+}
+
+.bg-success-subtle {
+    background-color: rgb(var(--bs-success-bg-subtle));
+}
+
+.btn.bg-success-subtle:hover  {
+    background-color: rgb(var(--bs-success-bg-subtle), 0.5);
+}
+
+.diagonal-contato {
+    background-image: linear-gradient(to top left, #FFFFFF 50%, #12CF60 50%);
+}
+
+/* menu-cliente menu-default */
+#menu-cliente.menu-default {
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#menu-cliente.menu-default .navbar {
+  background-color: transparent !important;
+}
+
+#menu-cliente.menu-default .navbar .navbar-brand {
+  color: white;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+#menu-cliente.menu-default .navbar .nav-link {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#menu-cliente.menu-default .navbar .nav-link:hover {
+  color: rgb(144, 185, 146);
+}
+
+@media screen and (min-width: 992px) {
+  #menu-cliente.menu-default .navbar .nav-link {
+    color: white;
+  }
+}
+
+/* menu-cliente menu-dark1 */
+#menu-cliente.menu-dark1 {
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+#menu-cliente.menu-dark1 .navbar {
+  background-color: #ffffff;
+}
+
+#menu-cliente.menu-dark1 .navbar .navbar-brand {
+  color: #3c403d;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+#menu-cliente.menu-dark1 .navbar .nav-link {
+  color: #3c403d;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#menu-cliente.menu-dark1 .navbar .nav-link:hover {
+  color: rgb(144, 185, 146);
+}
+
+@media screen and (min-width: 992px) {
+  #menu-cliente.menu-dark1 .navbar .nav-link {
+    color: #3c403d;
+  }
+}
+
+/* menu-cliente menu-dark1 */
+#menu-cliente.menu-dark2 .navbar .navbar-brand {
+  color: #3c403d;
+  font-weight: 700;
+  text-decoration: none;
+  line-height: 14px;
+}
+
+#menu-cliente.menu-dark2 .navbar .navbar-brand .brand-small{
+    font-size: 11px;
+    line-height: 12px;
+  }
+
+
+#menu-cliente.menu-dark2 .navbar .nav-link {
+  color: #3c403d;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#menu-cliente.menu-dark2 .navbar .nav-link:hover {
+  color: rgb(144, 185, 146);
+}
+
+@media screen and (min-width: 992px) {
+  #menu-cliente.menu-dark2 .navbar .nav-link {
+    color: #3c403d;
+  }
+}
+
+.offcanvas.offcanvas-end.show .nav-link {
+  color: #3c403d;
+}
+
+.offcanvas.offcanvas-end.show .offcanvas-title {
+  font-weight: 700;
+}
+
+/* jumbotrons home */
+.jumbotrons {
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.jumbotrons .container-lg {
+  position: relative;
+  width: 100%;
+  height: 514px;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.jumbotrons .filter {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-image: url("/static/images/fisioterapia.jpeg");
+  background-size: contain;
+  background-position: right;
+  background-repeat: no-repeat;
+}
+
+.jumbotrons .overlay {
+  position: absolute;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.jumbotrons .row {
+  position: relative;
+  z-index: 3;
+  color: white;
+}
+
+.woman {
+    position: absolute;
+    right: -150px;
+    bottom: 0;
+}
+
+.text-success-icons {
+    color: #0a3622;
+}
+
+
+@media screen and (max-width: 992px) {
+    .woman {
+        position: inherit;
+        padding-top: 25px;
+        width: 150px;
+    }
+}
+

@@ -1,10 +1,13 @@
-<header id="menu-cliente">
+<header id="menu-cliente" class="menu-dark2">
     <div class="container-lg px-0 mt-2">
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/">FísioFácil</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                <a class="navbar-brand" href="/">FísioFácil<br>
+                    <small class="brand-small">Área do Profissional</small></a>
+                
+                <button class="navbar-toggler" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar"
+                    aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
@@ -16,22 +19,24 @@
                     <div class="offcanvas-body">
                         <ul class="navbar-nav justify-content-end  justify-content-lg-start flex-grow-1 pe-3">
                             <li class="nav-item">
-                                <a class="nav-link" href="/">Home</a>
+                                <a class="nav-link" href="/adm/">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/servicos/">Serviços</a>
+                                <a class="nav-link" href="/adm/">Agendamentos</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/contato/">Contato</a>
+                                <a class="nav-link" href="/adm/">Cadastro de Serviços</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/profissionais/">Profissionais</a>
+                                <a class="nav-link" href="/adm/">Cadastro de Usuários</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/adm/">Permissões de Usuários</a>
                             </li>
                         </ul>
                         <div
                             class="d-flex align-items-lg-center flex-column flex-lg-row text-start justify-content-start">
-                            <a href="/login/" class="nav-link me-lg-3 my-2 my-lg-0">Área do Profissional</a>
-                            <a href="/agendar/" class="btn btn-success my-2 my-lg-0 f600">Agendar Agora <i
+                            <a href="/agendamentos/" class="btn btn-success my-2 my-lg-0 f600">Sair <i
                                     class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>

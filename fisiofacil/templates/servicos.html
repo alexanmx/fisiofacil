@@ -4,15 +4,11 @@
 
 {% block conteudo %}
 
-<div class="container menu-secondary">
-    {% include 'menu.html' %}
-</div>
-
 <div class="container text-center mt-5">
     <h1 class="text-color text-center f700">Serviços</h1>
     <p class="second-text-color">Melhore sua qualidade de vida e eleve seu bem-estar.</p>
 
-    <div class="row row-cols-1 row-cols-md-3 g-3 mt-5">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 my-5">
         {% for servico in servicos_ativos.results %}
         <div class="col">
             <div class="card h-100 text-center">
@@ -25,7 +21,7 @@
                 </div>
                 <div class="card-body">
                     <p class="second-text-color f600">{{ servico.servico_desc }}</p>
-                    <a href="/agendamentos/" class="link-success">Agendar uma consulta</a>
+                    <a href="/agendamentos/" class="link-success f600">Agendar uma consulta</a>
                 </div>
             </div>
         </div>

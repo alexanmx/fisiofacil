@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
-
 {% load static %} {% block titulo %}Página Inicial{% endblock %}
 
 {% block conteudo %}
-<div class="heros-home mb-5">
-    <div class="backdrop"></div>
-    <div class="overlay-cinza-rgba">
-        <div class="conteudo-no-overlay text-start container menu-white">
-            {% include 'menu.html' %}
-            <h1 class="display-6 fw-bold text-white pt-5">Tratamentos de Fisioterapia</h1>
-            <div class="col-lg-8 text-start">
-                <p class="lead mb-4 text-white">Nossos fisioterapeutas experientes desenvolvem planos de tratamento
+<div class="jumbotrons">
+    <div class="container-lg px-0 d-flex align-items-sm-center">
+        <div class="filter"></div>
+        <div class="overlay"></div>
+        <div class="row mt-5 pt-md-5">
+            <div class="col-lg-6 col-md-12 col-sm-12 px-5">
+                <h1 class="display-6 fw-bold">Tratamentos de Fisioterapia</h1>
+                <p class="lead mb-4">Nossos fisioterapeutas experientes desenvolvem planos de tratamento
                     personalizados para cada paciente, utilizando técnicas avançadas e um toque humano.</p>
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-start">
-                    <button type="button" class="btn btn-success btn-lg gap-3 rounded-pill px-5">Agende Agora</button>
+                    <button type="button" class="btn btn-success btn-lg gap-3 rounded-pill px-5">Agende
+                        Agora</button>
                     <button type="button" class="btn btn-outline-light btn-lg rounded-pill px-5">Ver
                         serviços</button>
                 </div>
@@ -22,7 +22,7 @@
     </div>
 </div>
 
-<div class="px-4 text-center">
+<div class="px-4 text-center my-5">
     <h2 class="display-7 fw-bold text-color">Serviços em Destaque</h2>
     <div class="row row-cols-1 row-cols-md-3 g-2 d-flex justify-content-center">
         {% for servico in servicos_ativos.results %}
