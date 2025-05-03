@@ -98,7 +98,7 @@ Este tutorial guia você através do processo de instalação e execução do pr
     * Se ocorrer erro ao executar as migrações, verifique as configurações e permissões do banco de dados.
     ```bash
     sudo -u postgres psql
-        \c fisiofacil_api
+       CREATE DATABASE fisiofacil_api;
 
         GRANT ALL PRIVILEGES ON SCHEMA public TO default_user;
         GRANT ALL PRIVILEGES ON DATABASE fisiofacil_api TO default_user;

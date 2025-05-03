@@ -1,11 +1,40 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from .models import Profissional, Servico, ProfissionalServico, Agendamento, Cliente, Prontuario
+from django.contrib.auth.models import User
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'id': {'read_only': True},
+        }
+
+    def create(self, validated_data):
+        # use create_user para garantir hashing da senha
+        return User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password']
+        )
 
 class ProfissionalSerializer(serializers.ModelSerializer):
+    usuario = UsuarioSerializer()
+
     class Meta:
         model = Profissional
-        fields = '__all__'
+        fields = ['id', 'nome', 'email', 'telefone',
+                  'cpf', 'data_nascimento', 'especialidade', 'usuario']
+
+    def create(self, validated_data):
+        # retira os dados de usuário para criar primeiro o User
+        usuario_data = validated_data.pop('usuario')
+        user = UsuarioSerializer().create(usuario_data)
+
+        # agora cria o Profissional referenciando o user
+        profissional = Profissional.objects.create(usuario=user, **validated_data)
+        return profissional
 
 class ServicoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,6 +74,9 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         queryset=ProfissionalServico.objects.filter(status=True)
     )
     
+    # Recebe o CPF para associar ao cliente
+    cpf = serializers.CharField(write_only=True)
+
     def validate(self, data):
         hora = data['hora']
         profissional_servico = data['profissional_servico']
@@ -53,6 +85,7 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         if hora.minute != 0:
             raise ValidationError("Os horários de agendamento devem ser horas inteiras.")
 
+        # Verifica se há conflitos de horário
         conflitos = Agendamento.objects.filter(
             profissional_servico=profissional_servico,
             data=data_agendamento,
@@ -64,9 +97,23 @@ class AgendamentoSerializer(serializers.ModelSerializer):
 
         return data
 
+    def create(self, validated_data):
+        # Obtemos o CPF do cliente que vem na requisição
+        cpf = validated_data.pop('cpf')
+
+        # Verificamos se o cliente já existe no sistema
+        try:
+            cliente = Cliente.objects.get(cpf=cpf)
+        except Cliente.DoesNotExist:
+            raise ValidationError("Cliente não encontrado com o CPF fornecido.")
+
+        # Agora associamos o cliente ao agendamento
+        agendamento = Agendamento.objects.create(cliente=cliente, **validated_data)
+        return agendamento
+
     class Meta:
         model = Agendamento
-        fields = '__all__'
+        fields = ['cpf', 'profissional_servico', 'data', 'hora', 'criado_em']
 
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
