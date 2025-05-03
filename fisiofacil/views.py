@@ -199,7 +199,6 @@ class ClienteViewSet(viewsets.ModelViewSet):
 class ProntuarioViewSet(viewsets.ModelViewSet):
     queryset = Prontuario.objects.all()
     serializer_class = ProntuarioSerializer
-<<<<<<< HEAD
     permission_classes = [IsAuthenticatedAndNoDelete]
 
 
@@ -233,7 +232,6 @@ class DeletarAgendamentoView(APIView):
 
         agendamento.delete()
         return Response({"detail": "Agendamento cancelado com sucesso."}, status=status.HTTP_204_NO_CONTENT)
-=======
 
 
 from django.shortcuts import render
@@ -278,4 +276,3 @@ def logout_view(request):
 
 def cadastrar(request):
     return render(request, 'cadastrar.html')
->>>>>>> 908f156d1e5c399c6ef6476d53841c6203db7ea7
