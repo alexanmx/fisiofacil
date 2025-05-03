@@ -8,9 +8,22 @@ from django.shortcuts import render, redirect
 from .models import Profissional, Servico, ProfissionalServico, Agendamento,Cliente, Prontuario
 from .serializers import ProfissionalSerializer, ServicoSerializer, ProfissionalServicoSerializer, ProfissionalServicoDetalhadoSerializer, AgendamentoSerializer, ProntuarioSerializer, ClienteSerializer
 from .forms import AgendamentoForm
+from django.http import JsonResponse
+from django.contrib.auth import authenticate, login
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.contrib.auth.models import User
+from django.contrib import messages
 from .permissions import IsProfissionalOrAdmin
 from rest_framework.permissions import AllowAny
 from .permissions import IsAuthenticatedAndNoDelete
+from django.http import JsonResponse
+from django.contrib.auth import authenticate, login
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 class ProfissionalViewSet(viewsets.ModelViewSet):
     queryset = Profissional.objects.all()
@@ -41,6 +54,7 @@ class ProfissionalServicoAtivoViewSet(viewsets.ReadOnlyModelViewSet):
         else:
             self.pagination_class.default_limit = 10
         return queryset
+
 class AgendamentoViewSet(viewsets.ModelViewSet):
     queryset = Agendamento.objects.all()
     serializer_class = AgendamentoSerializer
@@ -107,91 +121,6 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-
-# Views para renderização de páginas HTML com dados da API
-def index(request):
-    api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/?limit=3'
-    response = requests.get(api_url)
-    servicos_ativos = response.json() if response.status_code == 200 else []
-    return render(request, 'index.html', {'servicos_ativos': servicos_ativos})
-
-
-def profissionais(request):
-    api_url = 'http://127.0.0.1:8000/api/profissionais/'
-    response = requests.get(api_url)
-    profissionais = response.json() if response.status_code == 200 else []
-    return render(request, 'profissionais.html', {'profissionais': profissionais})
-
-
-def servicos(request):
-    api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/'
-    response = requests.get(api_url)
-    servicos_ativos = response.json() if response.status_code == 200 else []
-    return render(request, 'servicos.html', {'servicos_ativos': servicos_ativos})
-
-
-def agendamentos(request):
-    profissional_servicos = ProfissionalServico.objects.filter(status=True)
-    return render(request, 'agendamentos.html', {'profissional_servicos': profissional_servicos})
-
-
-def contato(request):
-    api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/'
-    response = requests.get(api_url)
-    servicos_ativos = response.json() if response.status_code == 200 else []
-    return render(request, 'contato.html', {'servicos_ativos': servicos_ativos})
-
-def profissionais(request):
-    api_url = 'http://127.0.0.1:8000/api/profissionais/'
-    response = requests.get(api_url)
-
-    if response.status_code == 200:
-        profissionais = response.json()
-    else:
-        profissionais = []
-
-    context = {
-        'profissionais': profissionais,
-    }
-    return render(request, 'profissionais.html', context)
-
-
-def servicos(request):
-    api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/'
-    response = requests.get(api_url)
-
-    if response.status_code == 200:
-        servicos_ativos = response.json()
-    else:
-        servicos_ativos = []
-
-    context = {
-        'servicos_ativos': servicos_ativos,
-    }
-
-    return render(request, 'servicos.html', context)
-
-
-def agendamentos(request):
-    profissional_servicos = ProfissionalServico.objects.filter(status=True)
-    return render(request, 'agendamentos.html', {'profissional_servicos': profissional_servicos})
-
-def contato(request):
-    api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/'
-    response = requests.get(api_url)
-
-    if response.status_code == 200:
-        servicos_ativos = response.json()
-    else:
-        servicos_ativos = []
-
-    context = {
-        'servicos_ativos': servicos_ativos,
-    }
-
-    return render(request, 'contato.html', context)
-
-
 class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
@@ -229,16 +158,79 @@ class DeletarAgendamentoView(APIView):
             return Response({"detail": "Cancelamento só é permitido com mais de 1 dia de antecedência."}, status=status.HTTP_403_FORBIDDEN)
 
         agendamento.delete()
-        return Response({"detail": "Agendamento cancelado com sucesso."}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"detail": "Agendamento cancelado com sucesso."}, status=status.HTTP_204_NO_CONTENT)    
+
+# Views para renderização de páginas HTML com dados da API
+def index(request):
+    api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/?limit=3'
+    response = requests.get(api_url)
+    servicos_ativos = response.json() if response.status_code == 200 else []
+    return render(request, 'index.html', {'servicos_ativos': servicos_ativos})
 
 
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.contrib.auth import authenticate, login
-from django.views.decorators.csrf import csrf_exempt
-import json
-from django.contrib.auth.models import User
-from django.contrib import messages
+def profissionais(request):
+    api_url = 'http://127.0.0.1:8000/api/profissionais/'
+    response = requests.get(api_url)
+    profissionais = response.json() if response.status_code == 200 else []
+    return render(request, 'profissionais.html', {'profissionais': profissionais})
+
+
+def servicos(request):
+    api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/'
+    response = requests.get(api_url)
+    servicos_ativos = response.json() if response.status_code == 200 else []
+    return render(request, 'servicos.html', {'servicos_ativos': servicos_ativos})
+
+
+def agendamentos(request):
+    profissional_servicos = ProfissionalServico.objects.filter(status=True)
+    return render(request, 'agendamentos.html', {'profissional_servicos': profissional_servicos})
+
+
+def contato(request):
+    return render(request, 'contato.html')
+
+
+def profissionais(request):
+    api_url = 'http://127.0.0.1:8000/api/profissionais/'
+    response = requests.get(api_url)
+
+    if response.status_code == 200:
+        profissionais = response.json()
+    else:
+        profissionais = []
+
+    context = {
+        'profissionais': profissionais,
+    }
+    return render(request, 'profissionais.html', context)
+
+
+def servicos(request):
+    api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/'
+    response = requests.get(api_url)
+
+    if response.status_code == 200:
+        servicos_ativos = response.json()
+    else:
+        servicos_ativos = []
+
+    context = {
+        'servicos_ativos': servicos_ativos,
+    }
+
+    return render(request, 'servicos.html', context)
+
+
+def agendamentos(request):
+    profissional_servicos = ProfissionalServico.objects.filter(status=True)
+    return render(request, 'agendamentos.html', {'profissional_servicos': profissional_servicos})
+
+
+def agendar(request):
+    profissional_servicos = ProfissionalServico.objects.filter(status=True)
+    return render(request, 'agendar.html', {'profissional_servicos': profissional_servicos})
+
 
 @csrf_exempt
 def login_view(request):
@@ -271,6 +263,18 @@ def logout_view(request):
     logout(request)
     messages.success(request, 'Logout realizado com sucesso.')
     return redirect('index')
+
+def cadastrar(request):
+    return render(request, 'cadastrar.html')
+
+
+# views administrativas
+# @login_required
+def indexAdm(request):
+    return render(request, 'profissional_index.html')
+
+def agendamentosAdm(request):
+    return render(request, 'profissional_agendamentos.html')
 
 def cadastrar(request):
     return render(request, 'cadastrar.html')
