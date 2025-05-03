@@ -115,8 +115,6 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         model = Agendamento
         fields = ['cpf', 'profissional_servico', 'data', 'hora', 'criado_em']
 
-
-
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente

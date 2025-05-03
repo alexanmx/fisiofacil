@@ -201,8 +201,6 @@ class ProntuarioViewSet(viewsets.ModelViewSet):
     serializer_class = ProntuarioSerializer
     permission_classes = [IsAuthenticatedAndNoDelete]
 
-
-
 class DeletarAgendamentoView(APIView):
     def delete(self, request):
         cpf = request.data.get("cpf")

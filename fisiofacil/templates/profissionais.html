@@ -3,25 +3,30 @@
 {% block titulo %}Lista de Profissionais{% endblock %}
 
 {% block conteudo %}
-<div class="container menu-secondary">
-    {% include 'menu.html' %}
-</div>
-
 <div class="container text-center mt-5">
     <h1 class="text-color text-center f700">Profissionais</h1>
     <p class="second-text-color">Conheça nossa equipe de profissionais.</p>
 
-    <div class="row row-cols-1 row-cols-md-3 g-2 mt-5">
+    <div class="row row-cols-1 row-cols-lg-3 row-cols-md-2 g-2 my-5">
         {% for profissional in profissional %}
         <div class="col">
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title text-color f700"><i class="bi bi-person-vcard"></i> {{ profissional.nome }}</h5>
+                    <h5 class="card-title text-color f700"><i class="bi bi-chevron-right text-info"></i>{{ profissional.nome }}</h5>
                     <p class="f600 second-text-color">{{ profissional.nome }}</p>
                 </div>
             </div>
         </div>
         {% endfor %}
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-color f700"><i class="bi bi-chevron-right text-info"></i> Teste de Prof</h5>
+                    <p class="f600 second-text-color">Teste de Prof ffsdfas df asd asd a fsda dsa as a</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
