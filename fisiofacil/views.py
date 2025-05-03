@@ -8,19 +8,9 @@ from django.shortcuts import render, redirect
 from .models import Profissional, Servico, ProfissionalServico, Agendamento,Cliente, Prontuario
 from .serializers import ProfissionalSerializer, ServicoSerializer, ProfissionalServicoSerializer, ProfissionalServicoDetalhadoSerializer, AgendamentoSerializer, ProntuarioSerializer, ClienteSerializer
 from .forms import AgendamentoForm
-<<<<<<< HEAD
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.contrib.auth import authenticate, login
-from django.views.decorators.csrf import csrf_exempt
-import json
-from django.contrib.auth.models import User
-from django.contrib import messages
-=======
 from .permissions import IsProfissionalOrAdmin
 from rest_framework.permissions import AllowAny
 from .permissions import IsAuthenticatedAndNoDelete
->>>>>>> origin/develop
 
 class ProfissionalViewSet(viewsets.ModelViewSet):
     queryset = Profissional.objects.all()
@@ -55,18 +45,6 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
     queryset = Agendamento.objects.all()
     serializer_class = AgendamentoSerializer
 
-<<<<<<< HEAD
-class ClienteViewSet(viewsets.ModelViewSet):
-    queryset = Cliente.objects.all()
-    serializer_class = ClienteSerializer
-
-class ProntuarioViewSet(viewsets.ModelViewSet):
-    queryset = Prontuario.objects.all()
-    serializer_class = ProntuarioSerializer
-
-
-# views públicas
-=======
     def get_permissions(self):
         if self.action in ['create', 'list']:
             return [AllowAny()]  # Cliente pode criar e listar sem login
@@ -131,7 +109,6 @@ class ProntuarioViewSet(viewsets.ModelViewSet):
 
 
 # Views para renderização de páginas HTML com dados da API
->>>>>>> origin/develop
 def index(request):
     api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/?limit=3'
     response = requests.get(api_url)
@@ -164,6 +141,20 @@ def contato(request):
     servicos_ativos = response.json() if response.status_code == 200 else []
     return render(request, 'contato.html', {'servicos_ativos': servicos_ativos})
 
+def profissionais(request):
+    api_url = 'http://127.0.0.1:8000/api/profissionais/'
+    response = requests.get(api_url)
+
+    if response.status_code == 200:
+        profissionais = response.json()
+    else:
+        profissionais = []
+
+    context = {
+        'profissionais': profissionais,
+    }
+    return render(request, 'profissionais.html', context)
+
 
 def servicos(request):
     api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/'
@@ -181,26 +172,23 @@ def servicos(request):
     return render(request, 'servicos.html', context)
 
 
+def agendamentos(request):
+    profissional_servicos = ProfissionalServico.objects.filter(status=True)
+    return render(request, 'agendamentos.html', {'profissional_servicos': profissional_servicos})
+
 def contato(request):
-    return render(request, 'contato.html')
-
-
-def profissionais(request):
-    api_url = 'http://127.0.0.1:8000/api/profissionais/'
+    api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/'
     response = requests.get(api_url)
 
     if response.status_code == 200:
-        profissionais = response.json()
+        servicos_ativos = response.json()
     else:
-        profissionais = []
+        servicos_ativos = []
 
     context = {
-        'profissionais': profissionais,
+        'servicos_ativos': servicos_ativos,
     }
-    return render(request, 'profissionais.html', context)
 
-<<<<<<< HEAD
-=======
     return render(request, 'contato.html', context)
 
 
@@ -211,10 +199,7 @@ class ClienteViewSet(viewsets.ModelViewSet):
 class ProntuarioViewSet(viewsets.ModelViewSet):
     queryset = Prontuario.objects.all()
     serializer_class = ProntuarioSerializer
-<<<<<<< HEAD
     permission_classes = [IsAuthenticatedAndNoDelete]
-
-
 
 class DeletarAgendamentoView(APIView):
     def delete(self, request):
@@ -245,7 +230,6 @@ class DeletarAgendamentoView(APIView):
 
         agendamento.delete()
         return Response({"detail": "Agendamento cancelado com sucesso."}, status=status.HTTP_204_NO_CONTENT)
-=======
 
 
 from django.shortcuts import render
@@ -255,7 +239,6 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.models import User
 from django.contrib import messages
->>>>>>> origin/develop
 
 @csrf_exempt
 def login_view(request):
@@ -283,32 +266,11 @@ def login_view(request):
     else:
         return render(request, 'login.html')
 
-
 def logout_view(request):
     from django.contrib.auth import logout
     logout(request)
     messages.success(request, 'Logout realizado com sucesso.')
     return redirect('index')
-    
 
-<<<<<<< HEAD
-def agendar(request):
-    profissional_servicos = ProfissionalServico.objects.filter(status=True)
-    return render(request, 'agendar.html', {'profissional_servicos': profissional_servicos})
-
-
-# views administrativas
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-
-# @login_required
-def indexAdm(request):
-    return render(request, 'profissional_index.html')
-
-def agendamentosAdm(request):
-    return render(request, 'profissional_agendamentos.html')
-=======
 def cadastrar(request):
     return render(request, 'cadastrar.html')
->>>>>>> 908f156d1e5c399c6ef6476d53841c6203db7ea7
->>>>>>> origin/develop
