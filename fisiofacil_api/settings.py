@@ -27,7 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',  # Adicione a aplicação rest_framework ao projeto
-    'fisiofacil',  # Adicione a aplicação fisiofacil ao projeto
+    'fisiofacil',  # Adicione a aplicação fisiofacil ao projeto,
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,13 @@ REST_FRAMEWORK = {
 }
 
 LOGIN_URL = '/login/'
+
+from datetime import timedelta
+SIMPLE_JWT = {
+    # 'JWT_VERIFY_EXPIRATION': False,  # desabilita a verificação de expiração
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=99999),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'BLACKLIST_AFTER_ROTATION': False,
+    'SIGNING_KEY': os.environ.get('SECRET_KEY_JWT', 'INSECURE'),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}

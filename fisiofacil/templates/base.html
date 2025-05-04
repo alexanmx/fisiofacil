@@ -22,30 +22,12 @@
 
 <body class="">
 
-    <header id="main-header">
-        <div class="container-lg px-0 mt-2">
-            <nav class="navbar navbar-expand-lg">
-                <div class="container-fluid">
-                    <a class="navbar-brand" href="/">FísioFácil</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
-                        data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar"
-                        aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
-                        aria-labelledby="offcanvasNavbarLabel">
-                        <div class="offcanvas-header">
-                            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">FísioFácil</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="offcanvas-body" id="menu-container">
-                            </div>
-                    </div>
-                </div>
-            </nav>
-        </div>
-    </header>
+    <!-- se usuario estiver autenticado include menu2.html -->
+    {% if user.is_authenticated %}
+        {% include 'menu_profissional.html' %}
+    {% else %}
+        {% include 'menu.html' %}
+    {% endif %}
 
     <main>
         {% block conteudo %}{% endblock %}
@@ -62,134 +44,40 @@
         integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
         crossorigin="anonymous"></script>
 
-        <script>
-            const menuClienteHTML = `
-                <ul class="navbar-nav justify-content-end  justify-content-lg-start flex-grow-1 pe-3">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/servicos/">Serviços</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contato/">Contato</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/profissionais/">Profissionais</a>
-                    </li>
-                </ul>
-                <div class="d-flex align-items-lg-center flex-column flex-lg-row text-start justify-content-start">
-                    <a href="/login/" class="nav-link me-lg-3 my-2 my-lg-0">Área do Profissional</a>
-                    <a href="/agendar/" class="btn btn-success my-2 my-lg-0 f600">Agendar Agora <i
-                            class="bi bi-arrow-right"></i></a>
-                </div>
-            `;
-        
-            const menuProfissionalHTML = `
-                <ul class="navbar-nav justify-content-end  justify-content-lg-start flex-grow-1 pe-3">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/adm/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/adm/agendamentos/">Agendamentos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/adm/servicos/cadastrar/">Cadastro de Serviços</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/adm/usuarios/cadastrar/">Cadastro de Usuários</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/adm/permissoes/">Permissões de Usuários</a>
-                    </li>
-                </ul>
-                <div class="d-flex align-items-lg-center flex-column flex-lg-row text-start justify-content-start">
-                    <a href="/logout/" class="btn btn-danger my-2 my-lg-0 f600">Sair <i
-                            class="bi bi-arrow-right"></i></a>
-                </div>
-            `;
-        
-            const accessToken = localStorage.getItem('accessToken');
-            const menuContainer = document.getElementById('menu-container');
-            const brandLink = document.querySelector('.navbar-brand');
-        
-            if (accessToken) {
-                menuContainer.innerHTML = menuProfissionalHTML;
-                brandLink.innerHTML = `FísioFácil<br><small class="brand-small">Área do Profissional</small>`;
-        
-                const logoutLink = document.querySelector('#menu-container a[href="/logout/"]');
-                if (logoutLink) {
-                    logoutLink.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        localStorage.removeItem('accessToken');
-                        localStorage.removeItem('refreshToken');
-                        window.location.href = '/'; // Redireciona para home (ou outra página)
-                    });
-                }
-            } else {
-                menuContainer.innerHTML = menuClienteHTML;
-                brandLink.textContent = 'FísioFácil';
+    <script>
+        // Obtém a URL atual
+        const urlAtual = window.location.pathname;
+
+        // Seleciona todos os links do menu
+        const links = document.querySelectorAll('.nav-link');
+
+        // Adiciona a classe 'active' ao link correspondente à rota atual
+        links.forEach(link => {
+            if (link.getAttribute('href') === urlAtual) {
+                link.classList.add('active');
             }
-        
-            const urlAtual = window.location.pathname;
-            const navLinks = document.querySelectorAll('#menu-container .nav-link');
-            navLinks.forEach(link => {
-                if (link.getAttribute('href') === urlAtual) {
-                    link.classList.add('active');
-                }
-            });
-        
-            const headerElement = document.querySelector('header');
-            const body = document.querySelector('body');
-            const main = document.querySelector('main');
-        
-            if (urlAtual === '/') {
-                headerElement.classList.add('menu-default');
-            } else if (urlAtual === '/servicos/' || urlAtual === '/agendar/') {
-                headerElement.classList.add('menu-dark1');
-            } else if (urlAtual === '/profissionais/') {
-                headerElement.classList.add('menu-dark1');
-            } else if (urlAtual === '/contato/') {
-                main.classList.add('diagonal-contato');
-                headerElement.classList.add('menu-dark1');
-            } else {
-                body.classList.add('dark');
-                headerElement.classList.add('menu-dark2');
-            }
-        
-            // Intercepta cliques em links para adicionar o cabeçalho Authorization
-            document.addEventListener('click', function(event) {
-                const target = event.target;
-                if (target.tagName === 'A' && target.href) {
-                    const href = target.getAttribute('href');
-                    const protectedRoutes = ['/adm/', '/agendamentos/']; // Adicione outras rotas protegidas
-                    if (protectedRoutes.includes(new URL(href, window.location.origin).pathname)) {
-                        event.preventDefault(); // Impede a navegação padrão
-                        if (accessToken) {
-                            fetch(href, {
-                                method: 'GET',
-                                headers: {
-                                    'Authorization': `Bearer ${accessToken}`
-                                }
-                            })
-                            .then(response => {
-                                if (response.ok) {
-                                    window.location.href = href; // Navega se a requisição for bem-sucedida
-                                } else {
-                                    window.location.href = '/login/'; // Redireciona para login se falhar
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Erro ao acessar ' + href + ':', error);
-                                window.location.href = '/login/'; // Trata erros
-                            });
-                        } else {
-                            window.location.href = '/login/'; // Redireciona se não houver token
-                        }
-                    }
-                }
-            });
-        </script>
+        });
+
+        // Adiciona a classe 'teste' ao header se a rota for '/servicos/' ou '/contato/'
+        const header = document.querySelector('header');
+        const body = document.querySelector('body');
+        const main = document.querySelector('main');
+
+        // se a rota for a home aplica a classe 'teste' ao header, se for servicos ou contatos, aplica a classe 'teste2' ou se for outras aplica a classe 'teste3'
+        if (urlAtual === '/') {
+            header.classList.add('menu-default');
+        } else if (urlAtual === '/servicos/' || urlAtual === '/agendar/') {
+            header.classList.add('menu-dark1');
+        } else if (urlAtual === '/profissionais/') {
+            header.classList.add('menu-dark1');
+        } else if (urlAtual === '/contato/') {
+            main.classList.add('diagonal-contato');
+            header.classList.add('menu-dark1');
+        } else {
+            body.classList.add('dark');
+            header.classList.add('menu-dark2');
+        }
+    </script>
 </body>
 
 </html>

@@ -1,29 +1,26 @@
-from rest_framework import viewsets, pagination,status
+from rest_framework import viewsets, pagination, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from datetime import date,datetime, timedelta
-from .models import Agendamento
+from datetime import datetime, timedelta
 import requests
 from django.shortcuts import render, redirect
-from .models import Profissional, Servico, ProfissionalServico, Agendamento,Cliente, Prontuario
+from .models import Profissional, Servico, ProfissionalServico, Agendamento, Cliente, Prontuario
 from .serializers import ProfissionalSerializer, ServicoSerializer, ProfissionalServicoSerializer, ProfissionalServicoDetalhadoSerializer, AgendamentoSerializer, ProntuarioSerializer, ClienteSerializer
 from .forms import AgendamentoForm
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
-import json
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .permissions import IsProfissionalOrAdmin
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from .permissions import IsAuthenticatedAndNoDelete
-from django.http import JsonResponse
-from django.contrib.auth import authenticate, login
-from django.views.decorators.csrf import csrf_exempt
-import json
-from django.contrib.auth.models import User
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from django.conf import settings
+from django.urls import reverse
+from django.contrib.auth import logout
+
 
 class ProfissionalViewSet(viewsets.ModelViewSet):
     queryset = Profissional.objects.all()
@@ -160,9 +157,8 @@ class DeletarAgendamentoView(APIView):
         agendamento.delete()
         return Response({"detail": "Agendamento cancelado com sucesso."}, status=status.HTTP_204_NO_CONTENT)    
 
-# Views para renderização de páginas HTML com dados da API
-from django.shortcuts import render
 
+# Views para renderização de páginas HTML com dados da API
 def index(request):
     api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/?limit=3'
     response = requests.get(api_url)
@@ -194,102 +190,68 @@ def contato(request):
     return render(request, 'contato.html')
 
 
-def profissionais(request):
-    api_url = 'http://127.0.0.1:8000/api/profissionais/'
-    response = requests.get(api_url)
-
-    if response.status_code == 200:
-        profissionais = response.json()
-    else:
-        profissionais = []
-
-    context = {
-        'profissionais': profissionais,
-    }
-    return render(request, 'profissionais.html', context)
-
-
-def servicos(request):
-    api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/'
-    response = requests.get(api_url)
-
-    if response.status_code == 200:
-        servicos_ativos = response.json()
-    else:
-        servicos_ativos = []
-
-    context = {
-        'servicos_ativos': servicos_ativos,
-    }
-
-    return render(request, 'servicos.html', context)
-
-
-def agendamentos(request):
-    profissional_servicos = ProfissionalServico.objects.filter(status=True)
-    return render(request, 'agendamentos.html', {'profissional_servicos': profissional_servicos})
-
-
 def agendar(request):
     profissional_servicos = ProfissionalServico.objects.filter(status=True)
     return render(request, 'agendar.html', {'profissional_servicos': profissional_servicos})
 
 
-@csrf_exempt
+def obter_token_jwt(username, password):
+    """Obtém o token JWT da API externa."""
+    auth_url = 'http://127.0.0.1:8000/api/token/'  # Defina isso em settings.py
+    payload = {'username': username, 'password': password}  # Adapte conforme a API
+    try:
+        response = requests.post(auth_url, json=payload)
+        response.raise_for_status()
+        data = response.json()
+        return data.get('access')  # Adapte conforme a resposta da API
+    except requests.exceptions.RequestException as e:
+        print(f"Erro ao obter token JWT: {e}")
+        if hasattr(response, 'status_code'):
+            print(f"Código de status da resposta: {response.status_code}")
+        if hasattr(response, 'text'):
+            print(f"Corpo da resposta: {response.text}")
+        return None
+
+
 def login_view(request):
     if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            login_data = data.get('login')
-            password = data.get('password')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
-            if not login_data or not password:
-                return JsonResponse({'error': 'Por favor, forneça login e senha.'}, status=400)
-
-            user = authenticate(request, username=login_data, password=password)
-
-            if user is not None:
-                login(request, user)
-                return JsonResponse({'success': 'Login efetuado com sucesso.'})
+        # Autentica o usuário no Django
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            token = obter_token_jwt(username, password)
+            if token:
+                request.session['jwt_token'] = token
+                return JsonResponse({'status': 'success', 'redirect': reverse('profissionais')})
             else:
-                return JsonResponse({'error': 'Credenciais inválidas.'}, status=401)
-
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Dados inválidos no corpo da requisição.'}, status=400)
-        except Exception as e:
-            return JsonResponse({'error': f'Ocorreu um erro: {str(e)}'}, status=500)
+                return JsonResponse({'status': 'error', 'message': 'Erro ao obter token JWT.'}, status=400)
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Usuário ou senha inválidos.'}, status=400)
     else:
+        # Se não for POST, apenas renderiza o formulário de login
         return render(request, 'login.html')
 
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth import logout
 
 def logout_view(request):
     logout(request)  # Limpa a sessão do Django (opcional, mas bom manter)
     messages.success(request, 'Logout realizado com sucesso.')
     return redirect('index')  # Redireciona para a página inicial   
 
+
 def cadastrar(request):
     return render(request, 'cadastrar.html')
 
 
 # views administrativas
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from django.shortcuts import render, redirect
-from django.http import HttpResponseForbidden
-
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
 def indexAdm(request):
-    # Se a autenticação JWT for bem-sucedida, você chegará aqui
-    return render(request, 'profissional_index.html')
+    if 'jwt_token' in request.session:
+        return render(request, 'profissional_index.html')
+    else:
+        return HttpResponse("Acesso não autorizado", status=401)
+
 
 def agendamentosAdm(request):
     return render(request, 'profissional_agendamentos.html')
-
-def cadastrar(request):
-    return render(request, 'cadastrar.html')

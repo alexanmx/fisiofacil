@@ -10,7 +10,7 @@
     <div class="row row-cols-1 row-cols-md-3 g-2 my-5">
         <main class="form-signin w-100 m-auto" style="max-width: 350px;">
             <div class="card p-2 text-start">
-                <form id="loginForm" class="row g-3" action="{% url 'token_obtain_pair' %}" method="POST">
+                <form id="loginForm" class="row g-3" action="{% url 'login' %}" method="POST">
                     {% csrf_token %}
                     <div class="col-12">
                         <label for="username" class="form-label f600">Usuário*</label>
@@ -30,40 +30,35 @@
         </main>
     </div>
 </div>
-<script>
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const form = this;
-        const formData = new FormData(form);
 
-        fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.access) {
-                // Login bem-sucedido, armazene o token e redirecione
-                localStorage.setItem('accessToken', data.access);
-                localStorage.setItem('refreshToken', data.refresh);
-                window.location.href = '/'; // Redirecione para a área logada
-            } else if (data.error) {
-                document.getElementById('error-message').textContent = data.error;
-                document.getElementById('error-message').style.display = 'block';
-            } else {
-                document.getElementById('error-message').textContent = 'Credenciais inválidas.';
-                document.getElementById('error-message').style.display = 'block';
-            }
-        })
-        .catch(error => {
-            document.getElementById('error-message').textContent = 'Ocorreu um erro na requisição.';
-            document.getElementById('error-message').style.display = 'block';
-            console.error('Erro:', error);
-        });
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    var formData = new FormData(event.target);
+    // O FormData já inclui os campos 'username', 'password' e o csrfmiddlewaretoken
+
+    fetch("{% url 'login' %}", {
+        method: "POST",
+        body: formData,
+    })
+    .then(response => {
+        if (response.ok) {
+            // Redirecionar o navegador após o sucesso (a resposta JSON não fará isso)
+            window.location.href = "{% url 'indexAdm' %}";
+        } else {
+            // Processar erros (você pode querer exibir uma mensagem no HTML)
+            response.json().then(data => {
+                console.error("Login failed:", data);
+                // Aqui você pode atualizar a interface do usuário para mostrar a mensagem de erro
+            });
+        }
+    })
+    .catch(error => {
+        console.error("An error occurred:", error);
+        // Aqui você pode atualizar a interface do usuário para mostrar um erro de rede
     });
+});
 </script>
 
 {% endblock %}
