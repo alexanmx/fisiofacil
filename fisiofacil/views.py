@@ -253,5 +253,50 @@ def indexAdm(request):
         return HttpResponse("Acesso não autorizado", status=401)
 
 
+def cadastrarUsuarioAdm(request):
+    if 'jwt_token' in request.session:
+        return render(request, 'profissional_cadastrarUsuario.html')
+    else:
+        return HttpResponse("Acesso não autorizado", status=401)
+
+def listarUsuarioAdm(request):
+    if 'jwt_token' in request.session:
+        api_url = 'http://127.0.0.1:8000/api/profissionais/'
+        response = requests.get(api_url)
+        usuarios = response.json() if response.status_code == 200 else []
+        return render(request, 'profissional_listarUsuario.html', {'usuarios': usuarios})
+    else:
+        return HttpResponse("Acesso não autorizado", status=401)
+
+
+
+def cadastrarServicoAdm(request):
+    if 'jwt_token' in request.session:
+        return render(request, 'profissional_cadastrarServico.html')
+    else:
+        return HttpResponse("Acesso não autorizado", status=401)
+    
+def listarServicoAdm(request):
+    if 'jwt_token' in request.session:
+        api_url = 'http://127.0.0.1:8000/api/servicos/'
+        response = requests.get(api_url)
+        servicos = response.json() if response.status_code == 200 else []
+        return render(request, 'profissional_listarServico.html', {'servicos': servicos})
+    else:
+        return HttpResponse("Acesso não autorizado", status=401)
+    
+def editarServicoAdm(request, servico_id):
+    if 'jwt_token' in request.session:
+        api_url = f'http://127.0.0.1:8000/api/servicos/{servico_id}/'
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            servico = response.json()
+            return render(request, 'profissional_editarServico.html', {'servico': servico})
+        else:
+            return HttpResponse("Serviço não encontrado", status=404)
+    else:
+        return HttpResponse("Acesso não autorizado", status=401)
+
+
 def agendamentosAdm(request):
     return render(request, 'profissional_agendamentos.html')

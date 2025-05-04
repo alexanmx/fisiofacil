@@ -11,5 +11,12 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     
     path('adm/', views.indexAdm, name='indexAdm'),
+    path('adm/cadastrar-usuario/', views.cadastrarUsuarioAdm, name='cadastrarUsuarioAdm'),
+    path('adm/listar-usuario/', views.listarUsuarioAdm, name='listarUsuarioAdm'),
+    path('adm/cadastrar-servico/', views.cadastrarServicoAdm, name='cadastrarServicoAdm'),
+    path('adm/listar-servico/', views.listarServicoAdm, name='listarServicoAdm'),
+    path('adm/editar-servico/<int:servico_id>/', views.editarServicoAdm, name='editarServicoAdm'),
+
+
     path('agendamentos/', views.agendamentosAdm, name='agendamentosAdm')
 ]
