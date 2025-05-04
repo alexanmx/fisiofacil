@@ -10,11 +10,11 @@
     <div class="row row-cols-1 row-cols-md-3 g-2 my-5">
         <main class="form-signin w-100 m-auto" style="max-width: 350px;">
             <div class="card p-2 text-start">
-                <form id="login-form" class="row g-3">
-
+                <form id="loginForm" class="row g-3" action="{% url 'token_obtain_pair' %}" method="POST">
+                    {% csrf_token %}
                     <div class="col-12">
-                        <label for="login" class="form-label f600">Usuário*</label>
-                        <input type="text" class="form-control py-3" name="login" id="login" placeholder="Login">
+                        <label for="username" class="form-label f600">Usuário*</label>
+                        <input type="text" class="form-control py-3" name="username" id="username" placeholder="Login">
                     </div>
                     <div class="col-12">
                         <label for="password" class="form-label f600">Senha*</label>
@@ -26,49 +26,44 @@
                     </div>
                 </form>
             </div>
-
+            
         </main>
     </div>
 </div>
-
 <script>
-    const form = document.getElementById('login-form');
-
-    form.addEventListener('submit', (event) => {
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
         event.preventDefault();
-
+        const form = this;
         const formData = new FormData(form);
-        const data = {};
-        formData.forEach((value, key) => data[key] = value);
 
-        fetch('/api/login/', {
+        fetch(form.action, {
             method: 'POST',
+            body: formData,
             headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+            }
         })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(errorData => { throw new Error(JSON.stringify(errorData)); });
-                }
-                return response.json();
-            })
-            .then(result => {
-                console.log('Login efetuado:', result);
-                alert('Login realizado com sucesso!');
-                form.reset();
-            })
-            .catch(error => {
-                console.error('Erro ao realizar o login:', error);
-                alert('Erro ao realizar o login.');
-                try {
-                    const errorData = JSON.parse(error.message);
-                    console.log('Detalhes do erro:', errorData);
-                } catch (e) {
-                    console.log('Erro ao realizar o login:', e);
-                }
-            });
+        .then(response => response.json())
+        .then(data => {
+            if (data.access) {
+                // Login bem-sucedido, armazene o token e redirecione
+                localStorage.setItem('accessToken', data.access);
+                localStorage.setItem('refreshToken', data.refresh);
+                window.location.href = '/'; // Redirecione para a área logada
+            } else if (data.error) {
+                document.getElementById('error-message').textContent = data.error;
+                document.getElementById('error-message').style.display = 'block';
+            } else {
+                document.getElementById('error-message').textContent = 'Credenciais inválidas.';
+                document.getElementById('error-message').style.display = 'block';
+            }
+        })
+        .catch(error => {
+            document.getElementById('error-message').textContent = 'Ocorreu um erro na requisição.';
+            document.getElementById('error-message').style.display = 'block';
+            console.error('Erro:', error);
+        });
     });
 </script>
+
 {% endblock %}

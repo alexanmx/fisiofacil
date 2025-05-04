@@ -161,11 +161,14 @@ class DeletarAgendamentoView(APIView):
         return Response({"detail": "Agendamento cancelado com sucesso."}, status=status.HTTP_204_NO_CONTENT)    
 
 # Views para renderização de páginas HTML com dados da API
+from django.shortcuts import render
+
 def index(request):
     api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/?limit=3'
     response = requests.get(api_url)
     servicos_ativos = response.json() if response.status_code == 200 else []
-    return render(request, 'index.html', {'servicos_ativos': servicos_ativos})
+    user = request.user if request.user.is_authenticated else None  # Obtém o usuário do Django, se autenticado
+    return render(request, 'index.html', {'servicos_ativos': servicos_ativos, 'user': user})
 
 
 def profissionais(request):
@@ -258,19 +261,31 @@ def login_view(request):
     else:
         return render(request, 'login.html')
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth import logout
+
 def logout_view(request):
-    from django.contrib.auth import logout
-    logout(request)
+    logout(request)  # Limpa a sessão do Django (opcional, mas bom manter)
     messages.success(request, 'Logout realizado com sucesso.')
-    return redirect('index')
+    return redirect('index')  # Redireciona para a página inicial   
 
 def cadastrar(request):
     return render(request, 'cadastrar.html')
 
 
 # views administrativas
-# @login_required
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from django.shortcuts import render, redirect
+from django.http import HttpResponseForbidden
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def indexAdm(request):
+    # Se a autenticação JWT for bem-sucedida, você chegará aqui
     return render(request, 'profissional_index.html')
 
 def agendamentosAdm(request):
