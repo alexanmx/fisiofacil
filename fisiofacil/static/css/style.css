@@ -26,6 +26,22 @@ body {
   border-color: #578453;
 }
 
+.btn-adm {
+    background-color: #64985F;
+    border-color: #64985F;
+    color: #3c403d;
+}
+
+.btn-adm:hover {
+    background-color: #558151;
+    border-color: #558151;
+    color: inherit;
+}
+
+.icon-lg { 
+    font-size: 1.2rem;
+}
+
 footer {
   background-color: #fafafa;
   font-weight: 600;
@@ -83,7 +99,7 @@ footer {
 
 /* main-header menu-default */
 #main-header.menu-default {
-  overflow: hidden;
+  /* overflow: hidden; */
   background-color: rgba(0, 0, 0, 0.5);
 }
 
@@ -109,7 +125,7 @@ footer {
 }
 
 #main-header.menu-default .navbar .nav-link:hover {
-  color: rgb(144, 185, 146);
+  color: #3c5a39;
 }
 
 @media screen and (min-width: 992px) {
@@ -141,7 +157,7 @@ footer {
 }
 
 #main-header.menu-dark1 .navbar .nav-link:hover {
-  color: rgb(144, 185, 146);
+  color: #3c5a39;
 }
 
 @media screen and (min-width: 992px) {
@@ -150,12 +166,16 @@ footer {
   }
 }
 
-/* main-header menu-dark1 */
+/* main-header menu-dark2 */
 #main-header.menu-dark2 .navbar .navbar-brand {
   color: #3c403d;
   font-weight: 700;
   text-decoration: none;
   line-height: 14px;
+}
+
+#main-header.menu-dark2.menu-default .navbar .navbar-brand {
+    color: #FFFFFF;
 }
 
 #main-header.menu-dark2 .navbar .navbar-brand .brand-small {
@@ -170,7 +190,7 @@ footer {
 }
 
 #main-header.menu-dark2 .navbar .nav-link:hover {
-  color: rgb(144, 185, 146);
+  color: #3c5a39;
 }
 
 @media screen and (min-width: 992px) {
@@ -178,6 +198,15 @@ footer {
     color: #3c403d;
   }
 }
+
+@media screen and (min-width: 992px) {
+    #main-header.menu-dark2.menu-default .navbar .nav-link {
+      color: white;
+    }
+    #main-header.menu-dark2.menu-default .navbar .nav-link:hover {
+        color: #3c5a39;
+      }
+  }
 
 .offcanvas.offcanvas-end.show .nav-link {
   color: #3c403d;

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block titulo %}Login{% endblock %}
+{% block titulo %}FisioFácil - Área do Profissional{% endblock %}
 
 {% block conteudo %}
 <div class="container text-center mt-5">
@@ -14,15 +14,15 @@
                     {% csrf_token %}
                     <div class="col-12">
                         <label for="username" class="form-label f600">Usuário*</label>
-                        <input type="text" class="form-control py-3" name="username" id="username" placeholder="Login">
+                        <input type="text" class="form-control py-3" name="username" id="username" placeholder="Login" required>
                     </div>
                     <div class="col-12">
                         <label for="password" class="form-label f600">Senha*</label>
                         <input type="password" class="form-control py-3" name="password" id="password"
-                            placeholder="sua senha">
+                            placeholder="sua senha" required>
                     </div>
                     <div class="col-12">
-                        <button class="btn btn-primary w-100 py-2 mt-2" type="submit">Login</button>
+                        <button class="btn btn-adm btn-lg f600 w-100 py-2 mt-2" type="submit">Login</button>
                     </div>
                 </form>
             </div>

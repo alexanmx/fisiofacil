@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 
-{% block titulo %}Login{% endblock %}
+{% block titulo %}FisioFácil - Novo Profissional{% endblock %}
 
 {% block conteudo %}
 <div class="container-lg text-center mt-5">
-    <h1 class="text-color text-center f700">Cadastro de Profissional</h1>
+    <h1 class="text-color text-center f700">Novo Profissional</h1>
+    <p class="text-secondary">Informação do profissional</p>
 </div>
 
 <div class="container-lg my-5">
@@ -12,9 +13,6 @@
         <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
             <form id="cadastrarUsuario" class="needs-validation" novalidate>
                 <div class="row g-3 g-lg-5">
-                    <div class="col-12">
-                        <h5>Informações do Profissional</h3>
-                    </div>
                     <div class="col-md-12 mt-2">
                         <label for="usuario_nome" class="form-label f600">Nome*</label>
                         <input type="text" name="nome" id="usuario_nome" class="form-control py-3"
@@ -43,20 +41,17 @@
                         <input type="text" name="especialidade" id="usuario_especialidade" class="form-control py-3"
                             placeholder="Informe uma especialidade" required>
                     </div>
-                    <div class="col-12 mt-5">
-                        <h5>Dados de acesso</h3>
-                    </div>
-                    <div class="col-md-6 mt-lg-0">
+                    <div class="col-md-6">
                         <label for="usuario_login" class="form-label f600">Login*</label>
                         <input type="text" name="usuario[username]" id="usuario_login" class="form-control py-3" required>
                     </div>
-                    <div class="col-md-6 mt-lg-0">
+                    <div class="col-md-6">
                         <label for="usuario_password" class="form-label f600">Senha*</label>
                         <input type="password" name="usuario[password]" id="usuario_password" class="form-control py-3"
                             placeholder="" required>
                     </div>
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-success f600">Cadastrar</button>
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-adm f600 btn-lg">Salvar</button>
                     </div>
                 </div>
             </form>

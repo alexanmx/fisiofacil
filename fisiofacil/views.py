@@ -166,13 +166,11 @@ def index(request):
     user = request.user if request.user.is_authenticated else None  # Obtém o usuário do Django, se autenticado
     return render(request, 'index.html', {'servicos_ativos': servicos_ativos, 'user': user})
 
-
 def profissionais(request):
     api_url = 'http://127.0.0.1:8000/api/profissionais/'
     response = requests.get(api_url)
     profissionais = response.json() if response.status_code == 200 else []
     return render(request, 'profissionais.html', {'profissionais': profissionais})
-
 
 def servicos(request):
     api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/'
@@ -180,20 +178,16 @@ def servicos(request):
     servicos_ativos = response.json() if response.status_code == 200 else []
     return render(request, 'servicos.html', {'servicos_ativos': servicos_ativos})
 
-
 def agendamentos(request):
     profissional_servicos = ProfissionalServico.objects.filter(status=True)
     return render(request, 'agendamentos.html', {'profissional_servicos': profissional_servicos})
 
-
 def contato(request):
     return render(request, 'contato.html')
-
 
 def agendar(request):
     profissional_servicos = ProfissionalServico.objects.filter(status=True)
     return render(request, 'agendar.html', {'profissional_servicos': profissional_servicos})
-
 
 def obter_token_jwt(username, password):
     """Obtém o token JWT da API externa."""
@@ -211,7 +205,6 @@ def obter_token_jwt(username, password):
         if hasattr(response, 'text'):
             print(f"Corpo da resposta: {response.text}")
         return None
-
 
 def login_view(request):
     if request.method == 'POST':
@@ -234,12 +227,10 @@ def login_view(request):
         # Se não for POST, apenas renderiza o formulário de login
         return render(request, 'login.html')
 
-
 def logout_view(request):
     logout(request)  # Limpa a sessão do Django (opcional, mas bom manter)
     messages.success(request, 'Logout realizado com sucesso.')
     return redirect('index')  # Redireciona para a página inicial   
-
 
 def cadastrar(request):
     return render(request, 'cadastrar.html')
@@ -251,7 +242,6 @@ def indexAdm(request):
         return render(request, 'profissional_index.html')
     else:
         return HttpResponse("Acesso não autorizado", status=401)
-
 
 def cadastrarUsuarioAdm(request):
     if 'jwt_token' in request.session:
@@ -268,7 +258,17 @@ def listarUsuarioAdm(request):
     else:
         return HttpResponse("Acesso não autorizado", status=401)
 
-
+def editarUsuarioAdm(request, usuario_id):
+    if 'jwt_token' in request.session:
+        api_url = f'http://127.0.0.1:8000/api/profissionais/{usuario_id}/'
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            usuario = response.json()
+            return render(request, 'profissional_editarUsuario.html', {'usuario': usuario})
+        else:
+            return HttpResponse("Usuário não encontrado", status=404)
+    else:
+        return HttpResponse("Acesso não autorizado", status=401)
 
 def cadastrarServicoAdm(request):
     if 'jwt_token' in request.session:
@@ -297,6 +297,40 @@ def editarServicoAdm(request, servico_id):
     else:
         return HttpResponse("Acesso não autorizado", status=401)
 
+def atribuirProfissionalAdm(request):
+    if 'jwt_token' in request.session:
+        api_url = 'http://127.0.0.1:8000/api/servicos/'
+        response = requests.get(api_url)
+        servicos = response.json() if response.status_code == 200 else []
 
-def agendamentosAdm(request):
-    return render(request, 'profissional_agendamentos.html')
+        # lista profissionais
+        api_url = 'http://127.0.0.1:8000/api/profissionais/'
+        response = requests.get(api_url)
+        profissionais = response.json() if response.status_code == 200 else []
+
+        return render(request, 'profissional_atribuirProfissional.html', {'servicos': servicos, 'profissionais': profissionais})
+    else:
+        return HttpResponse("Acesso não autorizado", status=401)
+
+def servicosProfissionalAdm(request):
+    if 'jwt_token' in request.session:
+        api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/'
+        response = requests.get(api_url)
+        servicos = response.json() if response.status_code == 200 else []
+        return render(request, 'profissional_listarServicosProfissionais.html', {'servicos': servicos})
+    else:
+        return HttpResponse("Acesso não autorizado", status=401)
+
+def cadastrarAgendamentoAdm(request):
+    if 'jwt_token' in request.session:
+        profissional_servicos = ProfissionalServico.objects.filter(status=True)
+        return render(request, 'profissional_cadastrarAgendamento.html', {'profissional_servicos': profissional_servicos})
+    else:
+        return HttpResponse("Acesso não autorizado", status=401)
+
+def listarAgendamentoAdm(request):
+    if 'jwt_token' in request.session:
+        api_url = 'http://127.0.0.1:8000/api/agendamentos/'
+        response = requests.get(api_url)
+        agendamentos = response.json() if response.status_code == 200 else []
+        return render(request, 'profissional_listarAgendamento.html', {'agendamentos': agendamentos})

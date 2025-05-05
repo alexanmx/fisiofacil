@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %} {% block titulo %}Página Inicial{% endblock %}
+{% load static %} {% block titulo %}FisioFácil - Agendamento de Serviços{% endblock %}
 
 {% block conteudo %}
 <div class="jumbotrons">
@@ -12,10 +12,10 @@
                 <p class="lead mb-4">Nossos fisioterapeutas experientes desenvolvem planos de tratamento
                     personalizados para cada paciente, utilizando técnicas avançadas e um toque humano.</p>
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-start">
-                    <button type="button" class="btn btn-success btn-lg gap-3 rounded-pill px-5">Agende
-                        Agora</button>
-                    <button type="button" class="btn btn-outline-light btn-lg rounded-pill px-5">Ver
-                        serviços</button>
+                    <a href="/agendar/" class="btn btn-success btn-lg gap-3 rounded-pill px-5">Agende
+                        Agora</a>
+                    <a href="/servicos/" class="btn btn-outline-light btn-lg rounded-pill px-5">Ver
+                        serviços</a>
                 </div>
             </div>
         </div>

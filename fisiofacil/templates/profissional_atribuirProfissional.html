@@ -1,38 +1,50 @@
 {% extends 'base.html' %}
 
-{% block titulo %}FisioFácil - Novo Serviço{% endblock %}
+{% block titulo %}FisioFácil - Atribuir Profissional x Serviço{% endblock %}
 
 {% block conteudo %}
 <div class="container-lg text-center mt-5">
-    <h1 class="text-color text-center f700">Novo Serviço</h1>
+    <h1 class="text-color text-center f700">Atribuir Profissional x Serviço</h1>
     <p class="text-secondary">Informação do serviço</p>
 </div>
 
 <div class="container-lg my-5">
     <div class="row">
         <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
-            <form id="cadastrarServico" class="needs-validation" novalidate>
+            <form id="atribuirProfissional" class="needs-validation" novalidate>
                 <div class="row g-3 g-lg-5">
                     <div class="col-md-12 mt-2">
-                        <label for="servico_nome" class="form-label f600">Serviço*</label>
-                        <input type="text" name="nome" id="servico_nome" class="form-control py-3"
-                            placeholder="Nome do Serviço" required>
+                        <label for="servico_item" class="form-label f600">Serviço*</label>
+                        <select name="servico" id="servico_item" class="form-select py-3">
+                            <option value="" selected disabled>Selecione um serviço</option>
+                            {% for servico in servicos %}
+                            <option value="{{ servico.id }}">{{ servico.nome }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                     <div class="col-md-12">
-                        <label for="servico_descricao" class="form-label f600">Descrição*</label>
-                        <input type="text" name="descricao" id="servico_descricao" class="form-control py-3"
-                            placeholder="Descreva o Serviço" required>
+                        <label for="profissional_item" class="form-label f600">Profissional*</label>
+                        <select name="profissional" id="profissional_item" class="form-select py-3">
+                            <option value="" selected disabled>Selecione um profissional</option>
+                            {% for profissional in profissionais %}
+                            <option value="{{ profissional.id }}">{{ profissional.nome }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                     <div class="col-md-6">
-                        <label for="servico_tempo" class="form-label f600">Duração*</label>
-                        <input type="text" name="tempo" id="servico_tempo" class="form-control py-3"
-                            placeholder="00h00min" required>
+                        <label for="data_inicio" class="form-label f600">Data Inicial*</label>
+                        <input type="date" name="data_inicio" id="data_inicio" class="form-control py-3">
                     </div>
                     <div class="col-md-6">
-                        <label for="servico_valor" class="form-label f600">Valor*</label>
-                        <input type="text" name="valor" id="servico_valor" class="form-control py-3"
+                        <label for="data_fim" class="form-label f600">Data Final (opcional)</label>
+                        <input type="date" name="data_fim" id="data_fim" class="form-control py-3">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="taxa" class="form-label f600">Valor*</label>
+                        <input type="text" name="taxa" id="taxa" class="form-control py-3"
                             placeholder="R$0,00" required>
                     </div>
+                    
                     <div class="col-12 text-center">
                         <button type="submit" class="btn btn-adm btn-lg f600">Salvar</button>
                     </div>
@@ -78,7 +90,7 @@
     (() => {
     'use strict'
 
-    const form = document.getElementById('cadastrarServico');
+    const form = document.getElementById('atribuirProfissional');
     const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
     const erroModalBody = document.getElementById('erroModalBody');
     const sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
@@ -105,7 +117,7 @@
             });
             console.log('Dados a serem enviados:', data);
 
-            fetch('/api/servicos/', {
+            fetch('/api/profissional-servicos/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -124,15 +136,15 @@
                     return response.json();
                 })
                 .then(result => {
-                    console.log('Serviço criado:', result);
-                    sucessoModalBody.textContent = 'Serviço criado com sucesso!';
+                    console.log('Atribuição criada:', result);
+                    sucessoModalBody.textContent = 'Atribuição criada com sucesso!';
                     sucessoModal.show();
                     form.reset();
                     form.classList.remove('was-validated');
                 })
                 .catch(error => {
-                    console.error('Erro ao criar Serviço:', error);
-                    let errorMessage = 'Ocorreu um erro ao criar o Serviço. Por favor, tente novamente.';
+                    console.error('Erro ao criar Atribuição:', error);
+                    let errorMessage = 'Ocorreu um erro ao criar a Atribuição. Por favor, tente novamente.';
                     try {
                         const errorData = JSON.parse(error.message);
                         errorMessage = `Detalhes do erro: ${JSON.stringify(errorData)}`;

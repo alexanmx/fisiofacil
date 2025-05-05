@@ -1,40 +1,62 @@
 {% extends 'base.html' %}
 
-{% block titulo %}FisioFácil - Editar Serviços{% endblock %}
+{% block titulo %}FisioFácil - Editar Profissional{% endblock %}
 
 {% block conteudo %}
 <div class="container-lg text-center mt-5">
-    <h1 class="text-color text-center f700">Editar Serviços</h1>
-    <p class="text-secondary">Informação do serviço</p>
+    <h1 class="text-color text-center f700">Editar Profissional</h1>
 </div>
 
 <div class="container-lg my-5">
     <div class="row">
         <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
-            <form id="editarServico" class="needs-validation" novalidate data-id="{{ servico.id }}">
+            <form id="editarUsuario" class="needs-validation" novalidate data-id="{{ usuario.id }}">
                 <div class="row g-3 g-lg-5">
+                    <div class="col-12">
+                        <h5>Informações do Profissional</h3>
+                    </div>
                     <div class="col-md-12 mt-2">
-                        <label for="servico_nome" class="form-label f600">Serviço*</label>
-                        <input type="text" name="nome" id="servico_nome" class="form-control py-3"
-                            placeholder="Nome do Serviço" value="{{ servico.nome }}" required>
+                        <label for="usuario_nome" class="form-label f600">Nome*</label>
+                        <input type="text" name="nome" id="usuario_nome" class="form-control py-3"
+                            placeholder="Nome Completo" value="{{ usuario.nome }}" required>
                     </div>
                     <div class="col-md-12">
-                        <label for="servico_descricao" class="form-label f600">Descrição*</label>
-                        <input type="text" name="descricao" id="servico_descricao" class="form-control py-3"
-                            placeholder="Descreva o Serviço" value="{{ servico.descricao }}" required>
+                        <label for="usuario_email" class="form-label f600">Email*</label>
+                        <input type="email" name="email" id="usuario_email" class="form-control py-3"
+                            placeholder="exemplo@exemplo.com" value="{{ usuario.email }}" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="servico_tempo" class="form-label f600">Duração*</label>
-                        <input type="text" name="tempo" id="servico_tempo" class="form-control py-3"
-                            placeholder="00h00min" value="{{ servico.valor }}" required>
+                        <label for="usuario_telefone" class="form-label f600">Telefone*</label>
+                        <input type="text" name="telefone" id="usuario_telefone" class="form-control py-3"
+                            placeholder="(99)99999-9999" value="{{ usuario.telefone }}" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="servico_valor" class="form-label f600">Valor*</label>
-                        <input type="text" name="valor" id="servico_valor" class="form-control py-3"
-                            placeholder="0.00" value="{{ servico.valor }}" required>
+                        <label for="usuario_cpf" class="form-label f600">CPF*</label>
+                        <input type="text" name="cpf" id="usuario_cpf" class="form-control py-3" placeholder="" value="{{ usuario.cpf }}"required>
                     </div>
-                    <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-adm f600">Salvar</button>
+                    <div class="col-md-4">
+                        <label for="dataNascimento" class="form-label f600">Data de Nascimento*</label>
+                        <input type="date" name="data_nascimento" id="dataNascimento" class="form-control py-3" value="{{ usuario.data_nascimento }}" required>
+                    </div>
+                    <div class="col-md-8">
+                        <label for="usuario_especialidade" class="form-label f600">Especialidade*</label>
+                        <input type="text" name="especialidade" id="usuario_especialidade" class="form-control py-3"
+                            placeholder="Informe uma especialidade" value="{{ usuario.especialidade }}" required>
+                    </div>
+                    <div class="col-12 mt-5">
+                        <h5>Dados de acesso</h3>
+                    </div>
+                    <div class="col-md-6 mt-lg-0">
+                        <label for="usuario_login" class="form-label f600">Login*</label>
+                        <input type="text" name="usuario[username]" id="usuario_login" class="form-control py-3" value="{{ usuario.usuario.username }}" disabled>
+                    </div>
+                    <div class="col-md-6 mt-lg-0">
+                        <label for="usuario_password" class="form-label f600">Senha*</label>
+                        <input type="password" name="usuario[password]" id="usuario_password" class="form-control py-3"
+                            placeholder="" required>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-success f600">Salvar</button>
                     </div>
                 </div>
             </form>
@@ -78,7 +100,7 @@
     (() => {
     'use strict'
 
-    const formEditarServico = document.getElementById('editarServico'); // Assumindo que o ID do seu formulário de edição é 'editarServico'
+    const formEditarServico = document.getElementById('editarUsuario'); // Assumindo que o ID do seu formulário de edição é 'editarServico'
     const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
     const erroModalBody = document.getElementById('erroModalBody');
     const sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
@@ -86,10 +108,10 @@
 
     // Assumindo que o ID do serviço está disponível em algum lugar,
     // por exemplo, em um atributo data-id do formulário ou em uma variável global.
-    const servicoId = formEditarServico.dataset.id; // Exemplo: <form id="editarServico" data-id="{{ servico.id }}">
+    const servicoId = formEditarusuario.dataset.id; // Exemplo: <form id="editarServico" data-id="{{ usuario.id }}">
 
-    formEditarServico.addEventListener('submit', event => {
-        if (!formEditarServico.checkValidity()) {
+    formEditarusuario.addEventListener('submit', event => {
+        if (!formEditarusuario.checkValidity()) {
             event.preventDefault();
             event.stopPropagation();
         } else {
@@ -143,7 +165,7 @@
                     erroModal.show();
                 });
         }
-        formEditarServico.classList.add('was-validated');
+        formEditarusuario.classList.add('was-validated');
     }, false);
 })();
 </script>
