@@ -330,7 +330,9 @@ def cadastrarAgendamentoAdm(request):
 
 def listarAgendamentoAdm(request):
     if 'jwt_token' in request.session:
+        jwt_token = request.session['jwt_token']
+        headers = {'Authorization': f'Bearer {jwt_token}'}
         api_url = 'http://127.0.0.1:8000/api/agendamentos/'
-        response = requests.get(api_url)
+        response = requests.get(api_url, headers=headers)
         agendamentos = response.json() if response.status_code == 200 else []
         return render(request, 'profissional_listarAgendamento.html', {'agendamentos': agendamentos})

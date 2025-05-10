@@ -30,17 +30,10 @@
                     <input type="time" name="hora" id="hora" class="form-control py-3">
                 </div>
                 <div class="col-md-12">
-                    <label for="cliente_nome" class="form-label f600">Nome*</label>
-                    <input type="text" name="cliente_nome" id="cliente_nome" class="form-control py-3" placeholder="Nome Completo">
+                    <label for="cliente_cpf" class="form-label f600">CPF*</label>
+                    <input type="text" name="cpf" id="cliente_cpf" class="form-control py-3" placeholder="" required>
                 </div>
-                <div class="col-md-5">
-                    <label for="cliente_telefone" class="form-label f600">Telefone*</label>
-                    <input type="text" name="cliente_telefone" id="cliente_telefone" class="form-control py-3" placeholder="(99)99999-9999">
-                </div>
-                <div class="col-md-7">
-                    <label for="cliente_email" class="form-label f600">Email*</label>
-                    <input type="email" name="cliente_email" id="cliente_email" class="form-control py-3" placeholder="exemplo@exemplo.com">
-                </div>
+
                 <div class="col-12 text-center">
                     <button type="submit" class="btn btn-adm btn-lg f600">Salvar</button>
                 </div>
@@ -54,10 +47,11 @@
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
                 <h5 class="modal-title" id="erroModalLabel">Erro!</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body" id="erroModalBody">
-                </div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
             </div>
@@ -70,10 +64,11 @@
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
                 <h5 class="modal-title" id="sucessoModalLabel">Sucesso!</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body" id="sucessoModalBody">
-                </div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
             </div>
@@ -83,77 +78,89 @@
 
 <script>
     (() => {
-    'use strict'
+        'use strict'
 
-    const form = document.getElementById('cadastrarAgendamento');
-    const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
-    const erroModalBody = document.getElementById('erroModalBody');
-    const sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
-    const sucessoModalBody = document.getElementById('sucessoModalBody');
+        const form = document.getElementById('cadastrarAgendamento');
+        const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
+        const erroModalBody = document.getElementById('erroModalBody');
+        const sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
+        const sucessoModalBody = document.getElementById('sucessoModalBody');
 
-    form.addEventListener('submit', event => {
-        if (!form.checkValidity()) {
-            event.preventDefault()
-            event.stopPropagation()
-        } else {
-            event.preventDefault();
-
-            const formData = new FormData(form);
-            const data = {
-                usuario: {}
-            };
-            formData.forEach((value, key) => {
-                if (key.startsWith('usuario[')) {
-                    const subKey = key.substring(8, key.length - 1);
-                    data.usuario[subKey] = value;
-                } else {
-                    data[key] = value;
-                }
-            });
-            console.log('Dados a serem enviados:', data);
-
-            fetch('/api/agendamentos/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(errorData => {
-                            const errorMessage = typeof errorData === 'object' ? JSON.stringify(errorData) : errorData;
-                            erroModalBody.textContent = `Erro na requisição: ${errorMessage}`;
-                            erroModal.show();
-                            throw new Error(JSON.stringify(errorData));
-                        });
-                    }
-                    return response.json();
-                })
-                .then(result => {
-                    console.log('Agendamento criado:', result);
-                    sucessoModalBody.textContent = 'Agendamento criado com sucesso!';
-                    sucessoModal.show();
-                    form.reset();
-                    form.classList.remove('was-validated');
-                })
-                .catch(error => {
-                    console.error('Erro ao criar Agendamento:', error);
-                    let errorMessage = 'Ocorreu um erro ao criar o Agendamento. Por favor, tente novamente.';
-                    try {
-                        const errorData = JSON.parse(error.message);
-                        errorMessage = `Detalhes do erro: ${JSON.stringify(errorData)}`;
-                        console.log('Detalhes do erro:', errorData);
-                    } catch (e) {
-                        console.log('Erro ao analisar detalhes do erro:', e);
-                        errorMessage = `Ocorreu um erro inesperado: ${error.message}`;
-                    }
-                    erroModalBody.textContent = errorMessage;
-                    erroModal.show();
-                });
+        // CPF
+        const input = document.getElementById("cliente_cpf");
+        input.addEventListener("keyup", formatarCPF);
+        function formatarCPF(e) {
+            var v = e.target.value.replace(/\D/g, "");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            e.target.value = v;
         }
-        form.classList.add('was-validated');
-    }, false);
-})();
+        // CPF
+
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            } else {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+                const data = {
+                    usuario: {}
+                };
+                formData.forEach((value, key) => {
+                    if (key.startsWith('usuario[')) {
+                        const subKey = key.substring(8, key.length - 1);
+                        data.usuario[subKey] = value;
+                    } else {
+                        data[key] = value;
+                    }
+                });
+                console.log('Dados a serem enviados:', data);
+
+                fetch('/api/agendamentos/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(errorData => {
+                                const errorMessage = typeof errorData === 'object' ? JSON.stringify(errorData) : errorData;
+                                erroModalBody.textContent = `Erro na requisição: ${errorMessage}`;
+                                erroModal.show();
+                                throw new Error(JSON.stringify(errorData));
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        console.log('Agendamento criado:', result);
+                        sucessoModalBody.textContent = 'Agendamento criado com sucesso!';
+                        sucessoModal.show();
+                        form.reset();
+                        form.classList.remove('was-validated');
+                    })
+                    .catch(error => {
+                        console.error('Erro ao criar Agendamento:', error);
+                        let errorMessage = 'Ocorreu um erro ao criar o Agendamento. Por favor, tente novamente.';
+                        try {
+                            const errorData = JSON.parse(error.message);
+                            errorMessage = `Detalhes do erro: ${JSON.stringify(errorData)}`;
+                            console.log('Detalhes do erro:', errorData);
+                        } catch (e) {
+                            console.log('Erro ao analisar detalhes do erro:', e);
+                            errorMessage = `Ocorreu um erro inesperado: ${error.message}`;
+                        }
+                        erroModalBody.textContent = errorMessage;
+                        erroModal.show();
+                    });
+            }
+            form.classList.add('was-validated');
+        }, false);
+    })();
 </script>
 {% endblock %}

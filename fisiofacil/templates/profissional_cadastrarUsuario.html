@@ -30,11 +30,13 @@
                     </div>
                     <div class="col-md-6">
                         <label for="usuario_cpf" class="form-label f600">CPF*</label>
-                        <input type="text" name="cpf" id="usuario_cpf" class="form-control py-3" placeholder="" required>
+                        <input type="text" name="cpf" id="usuario_cpf" class="form-control py-3" placeholder=""
+                            required>
                     </div>
                     <div class="col-md-4">
                         <label for="dataNascimento" class="form-label f600">Data de Nascimento*</label>
-                        <input type="date" name="data_nascimento" id="dataNascimento" class="form-control py-3" required>
+                        <input type="date" name="data_nascimento" id="dataNascimento" class="form-control py-3"
+                            required>
                     </div>
                     <div class="col-md-8">
                         <label for="usuario_especialidade" class="form-label f600">Especialidade*</label>
@@ -43,7 +45,8 @@
                     </div>
                     <div class="col-md-6">
                         <label for="usuario_login" class="form-label f600">Login*</label>
-                        <input type="text" name="usuario[username]" id="usuario_login" class="form-control py-3" required>
+                        <input type="text" name="usuario[username]" id="usuario_login" class="form-control py-3"
+                            required>
                     </div>
                     <div class="col-md-6">
                         <label for="usuario_password" class="form-label f600">Senha*</label>
@@ -64,10 +67,11 @@
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
                 <h5 class="modal-title" id="erroModalLabel">Erro!</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body" id="erroModalBody">
-                </div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
             </div>
@@ -80,10 +84,11 @@
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
                 <h5 class="modal-title" id="sucessoModalLabel">Sucesso!</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body" id="sucessoModalBody">
-                </div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
             </div>
@@ -93,77 +98,100 @@
 
 <script>
     (() => {
-    'use strict'
+        'use strict'
 
-    const form = document.getElementById('cadastrarUsuario');
-    const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
-    const erroModalBody = document.getElementById('erroModalBody');
-    const sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
-    const sucessoModalBody = document.getElementById('sucessoModalBody');
+        const form = document.getElementById('cadastrarUsuario');
+        const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
+        const erroModalBody = document.getElementById('erroModalBody');
+        const sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
+        const sucessoModalBody = document.getElementById('sucessoModalBody');
 
-    form.addEventListener('submit', event => {
-        if (!form.checkValidity()) {
-            event.preventDefault()
-            event.stopPropagation()
-        } else {
-            event.preventDefault();
-
-            const formData = new FormData(form);
-            const data = {
-                usuario: {}
-            };
-            formData.forEach((value, key) => {
-                if (key.startsWith('usuario[')) {
-                    const subKey = key.substring(8, key.length - 1);
-                    data.usuario[subKey] = value;
-                } else {
-                    data[key] = value;
-                }
-            });
-            console.log('Dados a serem enviados:', data);
-
-            fetch('/api/profissionais/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(errorData => {
-                            const errorMessage = typeof errorData === 'object' ? JSON.stringify(errorData) : errorData;
-                            erroModalBody.textContent = `Erro na requisição: ${errorMessage}`;
-                            erroModal.show();
-                            throw new Error(JSON.stringify(errorData));
-                        });
-                    }
-                    return response.json();
-                })
-                .then(result => {
-                    console.log('Usuário criado:', result);
-                    sucessoModalBody.textContent = 'Usuário criado com sucesso!';
-                    sucessoModal.show();
-                    form.reset();
-                    form.classList.remove('was-validated');
-                })
-                .catch(error => {
-                    console.error('Erro ao criar Usuário:', error);
-                    let errorMessage = 'Ocorreu um erro ao criar o usuário. Por favor, tente novamente.';
-                    try {
-                        const errorData = JSON.parse(error.message);
-                        errorMessage = `Detalhes do erro: ${JSON.stringify(errorData)}`;
-                        console.log('Detalhes do erro:', errorData);
-                    } catch (e) {
-                        console.log('Erro ao analisar detalhes do erro:', e);
-                        errorMessage = `Ocorreu um erro inesperado: ${error.message}`;
-                    }
-                    erroModalBody.textContent = errorMessage;
-                    erroModal.show();
-                });
+        // CPF
+        const inputCPF = document.getElementById("usuario_cpf");
+        inputCPF.addEventListener("keyup", formatarCPF);
+        function formatarCPF(e) {
+            var v = e.target.value.replace(/\D/g, "");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            e.target.value = v;
         }
-        form.classList.add('was-validated');
-    }, false);
-})();
+        // CPF
+
+        // telefone
+        const inputTEL = document.getElementById("usuario_telefone");
+        inputTEL.addEventListener("keyup", formatarTelefone);
+        function formatarTelefone(e) {
+            var v = e.target.value.replace(/\D/g, "");
+            v = v.replace(/^(\d\d)(\d)/g, "($1)$2");
+            v = v.replace(/(\d{5})(\d)/, "$1-$2");
+            e.target.value = v;
+        }
+        // telefone
+
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            } else {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+                const data = {
+                    usuario: {}
+                };
+                formData.forEach((value, key) => {
+                    if (key.startsWith('usuario[')) {
+                        const subKey = key.substring(8, key.length - 1);
+                        data.usuario[subKey] = value;
+                    } else {
+                        data[key] = value;
+                    }
+                });
+                console.log('Dados a serem enviados:', data);
+
+                fetch('/api/profissionais/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(errorData => {
+                                const errorMessage = typeof errorData === 'object' ? JSON.stringify(errorData) : errorData;
+                                erroModalBody.textContent = `Erro na requisição: ${errorMessage}`;
+                                erroModal.show();
+                                throw new Error(JSON.stringify(errorData));
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        console.log('Usuário criado:', result);
+                        sucessoModalBody.textContent = 'Usuário criado com sucesso!';
+                        sucessoModal.show();
+                        form.reset();
+                        form.classList.remove('was-validated');
+                    })
+                    .catch(error => {
+                        console.error('Erro ao criar Usuário:', error);
+                        let errorMessage = 'Ocorreu um erro ao criar o usuário. Por favor, tente novamente.';
+                        try {
+                            const errorData = JSON.parse(error.message);
+                            errorMessage = `Detalhes do erro: ${JSON.stringify(errorData)}`;
+                            console.log('Detalhes do erro:', errorData);
+                        } catch (e) {
+                            console.log('Erro ao analisar detalhes do erro:', e);
+                            errorMessage = `Ocorreu um erro inesperado: ${error.message}`;
+                        }
+                        erroModalBody.textContent = errorMessage;
+                        erroModal.show();
+                    });
+            }
+            form.classList.add('was-validated');
+        }, false);
+    })();
 </script>
 {% endblock %}
