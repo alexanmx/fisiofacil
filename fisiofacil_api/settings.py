@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-jvj32td*rr7o@!0pi!=xuexd2h*pzylz49-d$j*^ahm5otdg*r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['fisiofacil.onrender.com']
 
 
 # Application definition
@@ -72,14 +72,25 @@ WSGI_APPLICATION = 'fisiofacil_api.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'fisiofacil_api',
+#         'USER': 'default_user',
+#         'PASSWORD': 'default_password',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'fisiofacil_api',
-        'USER': 'default_user',
-        'PASSWORD': 'default_password',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+        'HOST': os.environ.get('DATABASE_HOST'),
+        'PORT': os.environ.get('DATABASE_PORT', '5432'), # Define um valor padrão para a porta
     }
 }
 
