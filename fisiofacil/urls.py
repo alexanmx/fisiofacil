@@ -10,6 +10,8 @@ urlpatterns = [
     path('agendar/', views.agendar, name='agendar'),
     path('logout/', views.logout_view, name='logout'),
     path('cadastrar/', views.cadastrar, name='cadastrar'),
+    path('meus-agendamentos/', views.meusAgendamentos, name='meusAgendamentos'),
+    path('meus-agendamentos/?cpf=<str:cpf>', views.meusAgendamentos, name='meusAgendamentos'),
     
     path('adm/', views.indexAdm, name='indexAdm'),
     path('adm/cadastrar-usuario/', views.cadastrarUsuarioAdm, name='cadastrarUsuarioAdm'),

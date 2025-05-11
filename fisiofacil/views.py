@@ -237,6 +237,13 @@ def logout_view(request):
 def cadastrar(request):
     return render(request, 'cadastrar.html')
 
+def meusAgendamentos(request):
+    cpf = request.GET.get('cpf')
+    api_url = f'{settings.API_BASE_URL}/api/agendamentos/?cpf={cpf}'
+    response = requests.get(api_url)
+    agendamentos = response.json() if response.status_code == 200 else []
+    return render(request, 'meus_agendamentos.html', {'agendamentos': agendamentos})
+
 
 # views administrativas
 def indexAdm(request):
