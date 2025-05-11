@@ -6,6 +6,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.views import TokenVerifyView
 from fisiofacil.views import DeletarAgendamentoView
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 router = routers.DefaultRouter()
 router.register(r'profissionais', views.ProfissionalViewSet)
@@ -27,3 +30,5 @@ urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('', include('fisiofacil.urls'))
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
