@@ -21,6 +21,8 @@ from django.conf import settings
 from django.urls import reverse
 from django.contrib.auth import logout
 
+import os
+
 
 class ProfissionalViewSet(viewsets.ModelViewSet):
     queryset = Profissional.objects.all()
@@ -160,20 +162,20 @@ class DeletarAgendamentoView(APIView):
 
 # Views para renderização de páginas HTML com dados da API
 def index(request):
-    api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/?limit=3'
+    api_url = f'{settings.API_BASE_URL}/api/profissional-servicos-ativos/?limit=3'
     response = requests.get(api_url)
     servicos_ativos = response.json() if response.status_code == 200 else []
     user = request.user if request.user.is_authenticated else None  # Obtém o usuário do Django, se autenticado
     return render(request, 'index.html', {'servicos_ativos': servicos_ativos, 'user': user})
 
 def profissionais(request):
-    api_url = 'http://127.0.0.1:8000/api/profissionais/'
+    api_url = f'{settings.API_BASE_URL}/api/profissionais/'
     response = requests.get(api_url)
     profissionais = response.json() if response.status_code == 200 else []
     return render(request, 'profissionais.html', {'profissionais': profissionais})
 
 def servicos(request):
-    api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/'
+    api_url = f'{settings.API_BASE_URL}/api/profissional-servicos-ativos/'
     response = requests.get(api_url)
     servicos_ativos = response.json() if response.status_code == 200 else []
     return render(request, 'servicos.html', {'servicos_ativos': servicos_ativos})
@@ -191,7 +193,7 @@ def agendar(request):
 
 def obter_token_jwt(username, password):
     """Obtém o token JWT da API externa."""
-    auth_url = 'http://127.0.0.1:8000/api/token/'  # Defina isso em settings.py
+    auth_url = '{settings.API_BASE_URL}/api/token/'  # Defina isso em settings.py
     payload = {'username': username, 'password': password}  # Adapte conforme a API
     try:
         response = requests.post(auth_url, json=payload)
@@ -251,7 +253,7 @@ def cadastrarUsuarioAdm(request):
 
 def listarUsuarioAdm(request):
     if 'jwt_token' in request.session:
-        api_url = 'http://127.0.0.1:8000/api/profissionais/'
+        api_url = f'{settings.API_BASE_URL}/api/profissionais/'
         response = requests.get(api_url)
         usuarios = response.json() if response.status_code == 200 else []
         return render(request, 'profissional_listarUsuario.html', {'usuarios': usuarios})
@@ -260,7 +262,7 @@ def listarUsuarioAdm(request):
 
 def editarUsuarioAdm(request, usuario_id):
     if 'jwt_token' in request.session:
-        api_url = f'http://127.0.0.1:8000/api/profissionais/{usuario_id}/'
+        api_url = f'{settings.API_BASE_URL}/api/profissionais/{usuario_id}/'
         response = requests.get(api_url)
         if response.status_code == 200:
             usuario = response.json()
@@ -278,7 +280,7 @@ def cadastrarServicoAdm(request):
     
 def listarServicoAdm(request):
     if 'jwt_token' in request.session:
-        api_url = 'http://127.0.0.1:8000/api/servicos/'
+        api_url = f'{settings.API_BASE_URL}/api/servicos/'
         response = requests.get(api_url)
         servicos = response.json() if response.status_code == 200 else []
         return render(request, 'profissional_listarServico.html', {'servicos': servicos})
@@ -287,7 +289,7 @@ def listarServicoAdm(request):
     
 def editarServicoAdm(request, servico_id):
     if 'jwt_token' in request.session:
-        api_url = f'http://127.0.0.1:8000/api/servicos/{servico_id}/'
+        api_url = f'{settings.API_BASE_URL}/api/servicos/{servico_id}/'
         response = requests.get(api_url)
         if response.status_code == 200:
             servico = response.json()
@@ -299,12 +301,12 @@ def editarServicoAdm(request, servico_id):
 
 def atribuirProfissionalAdm(request):
     if 'jwt_token' in request.session:
-        api_url = 'http://127.0.0.1:8000/api/servicos/'
+        api_url = f'{settings.API_BASE_URL}/api/servicos/'
         response = requests.get(api_url)
         servicos = response.json() if response.status_code == 200 else []
 
         # lista profissionais
-        api_url = 'http://127.0.0.1:8000/api/profissionais/'
+        api_url = f'{settings.API_BASE_URL}/api/profissionais/'
         response = requests.get(api_url)
         profissionais = response.json() if response.status_code == 200 else []
 
@@ -314,7 +316,7 @@ def atribuirProfissionalAdm(request):
 
 def servicosProfissionalAdm(request):
     if 'jwt_token' in request.session:
-        api_url = 'http://127.0.0.1:8000/api/profissional-servicos-ativos/'
+        api_url = f'{settings.API_BASE_URL}/api/profissional-servicos-ativos/'
         response = requests.get(api_url)
         servicos = response.json() if response.status_code == 200 else []
         return render(request, 'profissional_listarServicosProfissionais.html', {'servicos': servicos})
@@ -332,7 +334,7 @@ def listarAgendamentoAdm(request):
     if 'jwt_token' in request.session:
         jwt_token = request.session['jwt_token']
         headers = {'Authorization': f'Bearer {jwt_token}'}
-        api_url = 'http://127.0.0.1:8000/api/agendamentos/'
+        api_url = f'{settings.API_BASE_URL}/api/agendamentos/'
         response = requests.get(api_url, headers=headers)
         agendamentos = response.json() if response.status_code == 200 else []
         return render(request, 'profissional_listarAgendamento.html', {'agendamentos': agendamentos})
