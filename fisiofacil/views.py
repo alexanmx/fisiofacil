@@ -193,7 +193,7 @@ def agendar(request):
 
 def obter_token_jwt(username, password):
     """Obtém o token JWT da API externa."""
-    auth_url = '{settings.API_BASE_URL}/api/token/'  # Defina isso em settings.py
+    auth_url = f'{settings.API_BASE_URL}/api/token/'  # Defina isso em settings.py
     payload = {'username': username, 'password': password}  # Adapte conforme a API
     try:
         response = requests.post(auth_url, json=payload)
