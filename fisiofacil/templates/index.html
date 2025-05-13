@@ -2,7 +2,7 @@
 {% load static %} {% block titulo %}FisioFácil - Agendamento de Serviços{% endblock %}
 
 {% block conteudo %}
-<div class="jumbotrons">
+<div class="jumbotrons" role="region" aria-label="Destaque Principal">
     <div class="container-lg px-0 d-flex align-items-sm-center">
         <div class="filter"></div>
         <div class="overlay"></div>
@@ -22,7 +22,7 @@
     </div>
 </div>
 
-<div class="px-4 text-center my-5">
+<div class="px-4 text-center my-5" role="region" aria-labelledby="destaque-servicos">
     <h2 class="display-7 fw-bold text-color">Serviços em Destaque</h2>
     <div class="row row-cols-1 row-cols-md-3 g-2 d-flex justify-content-center">
         {% for servico in servicos_ativos.results %}
