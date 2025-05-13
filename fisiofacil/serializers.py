@@ -44,20 +44,18 @@ class ProfissionalSerializer(serializers.ModelSerializer):
         return profissional
 
 class ServicoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Servico
-        fields = '__all__'
-        
-class ServicoListSerializer(serializers.ModelSerializer):
-    valor = serializers.SerializerMethodField()
+    valor_formatado = serializers.SerializerMethodField(read_only=True)
+    valor = serializers.DecimalField(max_digits=10, decimal_places=2)
 
-    def get_valor(self, obj):
-        # Formata o valor da taxa como moeda brasileira
+    def get_valor_formatado(self, obj):
         return f"R$ {localize(obj.valor)}"
 
     class Meta:
         model = Servico
         fields = '__all__'
+        # Se você não quiser o 'valor_formatado' durante a criação/edição,
+        # pode explicitamente definir os campos que podem ser escritos:
+        # fields = ('id', 'nome', 'descricao', 'valor')
 
 class ProfissionalServicoSerializer(serializers.ModelSerializer):
     profissional_nome = serializers.SerializerMethodField()

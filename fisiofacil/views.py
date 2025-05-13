@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import requests
 from django.shortcuts import render, redirect
 from .models import Profissional, Servico, ProfissionalServico, Agendamento, Cliente, Prontuario
-from .serializers import ProfissionalSerializer, ServicoSerializer, ServicoListSerializer, ProfissionalServicoSerializer, ProfissionalServicoDetalhadoSerializer, AgendamentoSerializer, ProntuarioSerializer, ClienteSerializer
+from .serializers import ProfissionalSerializer, ServicoSerializer, ProfissionalServicoSerializer, ProfissionalServicoDetalhadoSerializer, AgendamentoSerializer, ProntuarioSerializer, ClienteSerializer
 from .forms import AgendamentoForm
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login
@@ -30,7 +30,7 @@ class ProfissionalViewSet(viewsets.ModelViewSet):
 
 class ServicoViewSet(viewsets.ModelViewSet):
     queryset = Servico.objects.all()
-    serializer_class = ServicoListSerializer
+    serializer_class = ServicoSerializer
 
 class ProfissionalServicoViewSet(viewsets.ModelViewSet):
     queryset = ProfissionalServico.objects.all()
