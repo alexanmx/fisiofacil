@@ -107,14 +107,9 @@
                 event.preventDefault();
 
                 const formData = new FormData(form);
-                const data = {
-                    usuario: {}
-                };
+                const data = {};
                 formData.forEach((value, key) => {
-                    if (key.startsWith('usuario[')) {
-                        const subKey = key.substring(8, key.length - 1);
-                        data.usuario[subKey] = value;
-                    }else if (key.startsWith('valor')) {
+                    if (key.startsWith('valor')) {
                         const valor = value.replace(/\./g, '').replace(',', '.');
                         data.valor = parseFloat(valor);
                     } else {
