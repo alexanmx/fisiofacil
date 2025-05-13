@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import requests
 from django.shortcuts import render, redirect
 from .models import Profissional, Servico, ProfissionalServico, Agendamento, Cliente, Prontuario
-from .serializers import ProfissionalSerializer, ServicoSerializer, ProfissionalServicoSerializer, ProfissionalServicoDetalhadoSerializer, AgendamentoSerializer, ProntuarioSerializer, ClienteSerializer
+from .serializers import ProfissionalSerializer, ServicoSerializer, ServicoListSerializerProfissionalServicoSerializer, ProfissionalServicoDetalhadoSerializer, AgendamentoSerializer, ProntuarioSerializer, ClienteSerializer
 from .forms import AgendamentoForm
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login
