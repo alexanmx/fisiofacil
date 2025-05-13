@@ -87,13 +87,14 @@ WSGI_APPLICATION = 'fisiofacil_api.wsgi.application'
 #     }
 # }
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DATABASE_NAME'),
-        'USER': os.environ.get('DATABASE_USER'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-        'HOST': os.environ.get('DATABASE_HOST'),
+        'NAME': os.environ.get('DATABASE_NAME', 'fisiofacil_api'),
+        'USER': os.environ.get('DATABASE_USER', 'fisiofacil_api_user'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'qazkTf4RYgGW4rRzG9YhXxnwUclaToYz'),
+        'HOST': os.environ.get('DATABASE_HOST', 'dpg-d0fo9449c44c73bhanrg-a.oregon-postgres.render.com'),
         'PORT': os.environ.get('DATABASE_PORT', '5432'), # Define um valor padrão para a porta
     }
 }
