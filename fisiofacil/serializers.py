@@ -61,18 +61,19 @@ class ProfissionalServicoSerializer(serializers.ModelSerializer):
     profissional_nome = serializers.SerializerMethodField()
     servico_nome = serializers.SerializerMethodField()
     servico_desc = serializers.SerializerMethodField()
-    taxa = serializers.SerializerMethodField()
+
+    taxa = serializers.DecimalField(max_digits=10, decimal_places=2)
+    taxa_formatada = serializers.SerializerMethodField(read_only=True)
+
     data_inicio = serializers.DateField(format="%d/%m/%Y")
     data_fim = serializers.DateField(format="%d/%m/%Y")
+
+    def get_taxa_formatada(self, obj):
+        return f"R$ {localize(obj.valor)}"
 
     def get_taxa(self, obj):
         # Formata o taxa da taxa como moeda brasileira
         return f"R$ {localize(obj.taxa)}"
-
-
-    class Meta:
-        model = ProfissionalServico
-        fields = '__all__'
 
     def get_profissional_nome(self, obj):
         return obj.profissional.nome
@@ -82,6 +83,10 @@ class ProfissionalServicoSerializer(serializers.ModelSerializer):
     
     def get_servico_desc(self, obj):
         return obj.servico.descricao
+
+    class Meta:
+        model = ProfissionalServico
+        fields = '__all__'
     
 class ProfissionalServicoDetalhadoSerializer(serializers.ModelSerializer):
     profissional_nome = serializers.CharField(source='profissional.nome', read_only=True)
