@@ -30,7 +30,7 @@ class ProfissionalViewSet(viewsets.ModelViewSet):
 
 class ServicoViewSet(viewsets.ModelViewSet):
     queryset = Servico.objects.all()
-    serializer_class = ServicoSerializer
+    serializer_class = ServicoListSerializer
 
 class ProfissionalServicoViewSet(viewsets.ModelViewSet):
     queryset = ProfissionalServico.objects.all()

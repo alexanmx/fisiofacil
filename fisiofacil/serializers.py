@@ -44,6 +44,11 @@ class ProfissionalSerializer(serializers.ModelSerializer):
         return profissional
 
 class ServicoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Servico
+        fields = '__all__'
+        
+class ServicoListSerializer(serializers.ModelSerializer):
     valor = serializers.SerializerMethodField()
 
     def get_valor(self, obj):
