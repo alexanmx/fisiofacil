@@ -17,7 +17,7 @@
                     <select name="profissional_servico" id="profissional_servico" class="form-select py-3" required>
                         <option value="" selected disabled>Selecione um serviço</option>
                         {% for ps in profissional_servicos %}
-                        <option value="{{ ps.id }}">{{ ps.profissional.nome }} - {{ ps.servico.nome }}</option>
+                        <option value="{{ ps.id }}">{{ ps.servico.nome }} - {{ ps.profissional.nome }}</option>
                         {% endfor %}
                     </select>
                 </div>
