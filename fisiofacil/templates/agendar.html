@@ -149,7 +149,7 @@
                         let errorMessage = 'Ocorreu um erro ao criar o Agendamento. Por favor, tente novamente.';
                         try {
                             const errorData = JSON.parse(error.message);
-                            errorMessage = `Detalhes do erro: ${JSON.stringify(errorData)}`;
+                            errorMessage = `Detalhes do erro: ${JSON.stringify(errorData.detail)}`;
                             console.log('Detalhes do erro:', errorData);
                         } catch (e) {
                             console.log('Erro ao analisar detalhes do erro:', e);
