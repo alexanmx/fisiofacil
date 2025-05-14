@@ -36,7 +36,8 @@
                                     <th scope="col">Horário</th>
                                     <th scope="col">Cliente</th>
                                     <th scope="col">Tratamento</th>
-                                    <th scope="col">Sessão</th>
+                                    <th scope="col">Serviço</th>
+                                    <th scope="col">Profissional</th>
                                     <th scope="col">Valor</th>
                                     <th scope="col">Confirmada</th>
                                     <th scope="col">Criado em</th>
@@ -50,8 +51,10 @@
                                     <td>{{ agendamento.data }}</td>
                                     <td>{{ agendamento.hora }}</td>
                                     <td>{{ agendamento.cliente.nome }}</td>
+                                    
+                                    <td></td>
                                     <td>{{ agendamento.profissional_servico.servico_nome  }}</td>
-                                    <td>{{ agendamento.profissional_servico.nome  }}</td>
+                                    <td>{{ agendamento.profissional_servico.profissional_nome  }}</td>
                                     <td>{{ agendamento.taxa_formatada  }}</td>
                                     <td>sim/não</td>
                                     <td>{{ agendamento.criado_em }}</td>

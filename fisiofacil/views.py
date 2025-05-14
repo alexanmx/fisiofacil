@@ -344,4 +344,19 @@ def listarAgendamentoAdm(request):
         api_url = f'{settings.API_BASE_URL}/api/agendamentos/'
         response = requests.get(api_url, headers=headers)
         agendamentos = response.json() if response.status_code == 200 else []
-        return render(request, 'profissional_listarAgendamento.html', {'agendamentos': agendamentos})
+        return render(request, 'profissional_listarAgendamento.html', {'agendamentos': agendamentos})   
+
+def cadastrarClienteAdm(request):
+    if 'jwt_token' in request.session:
+        return render(request, 'profissional_cadastrarCliente.html')
+    else:
+        return HttpResponse("Acesso não autorizado", status=401)
+
+def listarClienteAdm(request):
+    if 'jwt_token' in request.session:
+        api_url = f'{settings.API_BASE_URL}/api/clientes/'
+        response = requests.get(api_url)
+        clientes = response.json() if response.status_code == 200 else []
+        return render(request, 'profissional_listarCliente.html', {'clientes': clientes})
+    else:
+        return HttpResponse("Acesso não autorizado", status=401)

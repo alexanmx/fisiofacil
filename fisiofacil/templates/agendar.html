@@ -43,7 +43,7 @@
 </div>
 
 <div class="modal fade" id="erroModal" tabindex="-1" aria-labelledby="erroModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
                 <h5 class="modal-title" id="erroModalLabel">Erro!</h5>
@@ -60,7 +60,7 @@
 </div>
 
 <div class="modal fade" id="sucessoModal" tabindex="-1" aria-labelledby="sucessoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
                 <h5 class="modal-title" id="sucessoModalLabel">Sucesso!</h5>
@@ -149,13 +149,15 @@
                         let errorMessage = 'Ocorreu um erro ao criar o Agendamento. Por favor, tente novamente.';
                         try {
                             const errorData = JSON.parse(error.message);
-                            errorMessage = `Detalhes do erro: ${JSON.stringify(errorData.detail)}`;
+                            errorMessage = errorData.detail;
+                            // concatenar error mensagem com link para se cadastrar
+                            errorMessage += '<p class="pt-4">Se você não possui cadastro, faça seu cadastro <a href="/cadastrar/">aqui</a>.</p>';
                             console.log('Detalhes do erro:', errorData);
                         } catch (e) {
                             console.log('Erro ao analisar detalhes do erro:', e);
                             errorMessage = `Ocorreu um erro inesperado: ${error.message}`;
                         }
-                        erroModalBody.textContent = errorMessage;
+                        erroModalBody.innerHTML = errorMessage;
                         erroModal.show();
                     });
             }

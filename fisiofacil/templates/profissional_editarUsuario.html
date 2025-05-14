@@ -48,7 +48,7 @@
                     </div>
                     <div class="col-md-6 mt-lg-0">
                         <label for="usuario_login" class="form-label f600">Login*</label>
-                        <input type="text" name="usuario[username]" id="usuario_login" class="form-control py-3" value="{{ usuario.usuario.username }}" disabled>
+                        <input type="text" name="usuario[username]" id="usuario_login" class="form-control py-3" value="{{ usuario.usuario.username }}" required>
                     </div>
                     <div class="col-md-6 mt-lg-0">
                         <label for="usuario_password" class="form-label f600">Senha*</label>
@@ -90,7 +90,7 @@
             <div class="modal-body" id="sucessoModalBody">
                 </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
             </div>
         </div>
     </div>
@@ -100,7 +100,7 @@
     (() => {
     'use strict'
 
-    const formEditarServico = document.getElementById('editarUsuario'); // Assumindo que o ID do seu formulário de edição é 'editarServico'
+    const formEditarUsuario = document.getElementById('editarUsuario'); // Assumindo que o ID do seu formulário de edição é 'editarServico'
     const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
     const erroModalBody = document.getElementById('erroModalBody');
     const sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
@@ -108,16 +108,16 @@
 
     // Assumindo que o ID do serviço está disponível em algum lugar,
     // por exemplo, em um atributo data-id do formulário ou em uma variável global.
-    const servicoId = formEditarusuario.dataset.id; // Exemplo: <form id="editarServico" data-id="{{ usuario.id }}">
+    const userId = formEditarUsuario.dataset.id; // Exemplo: <form id="editarServico" data-id="{{ usuario.id }}">
 
-    formEditarusuario.addEventListener('submit', event => {
-        if (!formEditarusuario.checkValidity()) {
+    formEditarUsuario.addEventListener('submit', event => {
+        if (!formEditarUsuario.checkValidity()) {
             event.preventDefault();
             event.stopPropagation();
         } else {
             event.preventDefault();
 
-            const formData = new FormData(formEditarServico);
+            const formData = new FormData(formEditarUsuario);
             const data = {}; // Não precisamos mais da estrutura 'usuario' a menos que a API de edição precise
 
             formData.forEach((value, key) => {
@@ -126,7 +126,7 @@
 
             console.log('Dados a serem enviados para edição:', data);
 
-            fetch(`/api/servicos/${servicoId}/`, { // Inclui o ID na URL e muda o método para PUT ou PATCH
+            fetch(`/api/profissionais/${userId}/`, { // Inclui o ID na URL e muda o método para PUT ou PATCH
                 method: 'PUT', // Ou 'PATCH', dependendo da sua API
                 headers: {
                     'Content-Type': 'application/json',
@@ -165,7 +165,7 @@
                     erroModal.show();
                 });
         }
-        formEditarusuario.classList.add('was-validated');
+        formEditarUsuario.classList.add('was-validated');
     }, false);
 })();
 </script>

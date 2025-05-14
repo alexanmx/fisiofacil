@@ -24,4 +24,7 @@ urlpatterns = [
     path('adm/servicos-profissionais/', views.servicosProfissionalAdm, name='servicosProfissionalAdm'),
     path('adm/cadastrar-agendamento/', views.cadastrarAgendamentoAdm, name='cadastrarAgendamentoAdm'),
     path('adm/listar-agendamento/', views.listarAgendamentoAdm, name='listarAgendamentoAdm'),
+
+    path('adm/cadastrar-cliente/', views.cadastrarClienteAdm, name='cadastrarClienteAdm'),
+    path('adm/listar-cliente/', views.listarClienteAdm, name='listarClienteAdm'),
 ]
