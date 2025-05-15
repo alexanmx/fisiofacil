@@ -32,9 +32,11 @@ INSTALLED_APPS = [
     'rest_framework',  # Adicione a aplicação rest_framework ao projeto
     'fisiofacil',  # Adicione a aplicação fisiofacil ao projeto,
     'rest_framework_simplejwt',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -43,6 +45,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://fisiofacil.onrender.com",
+    "http://127.0.1:8000",
+    "http://localhost:8000",
+    'https://acessos.vlibras.gov.br',
 ]
 
 ROOT_URLCONF = 'fisiofacil_api.urls'
