@@ -24,18 +24,20 @@
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    
-    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+
 </head>
 
 <body class="">
 
     <!-- se usuario estiver autenticado include menu2.html -->
     {% if user.is_authenticated %}
-        {% include 'menu_profissional.html' %}
+    {% include 'menu_profissional.html' %}
     {% else %}
-        {% include 'menu.html' %}
+    {% include 'menu.html' %}
     {% endif %}
 
     <main>
@@ -46,7 +48,19 @@
         <p class="text-center second-text-color f600 my-0 py-0 small">© 2025 Todos os Direitos Reservados</p>
     </footer>
 
-    
+    <!-- Vlibras -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+
 
     <script>
         // Obtém a URL atual
