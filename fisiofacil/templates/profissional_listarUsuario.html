@@ -22,7 +22,8 @@
             </form>
         </div>
         <div class="col-lg-4 py-3 text-end">
-            <a href="/adm/cadastrar-usuario/" class="btn btn-adm f600">Adicionar Novo <i class="bi bi-plus icon-lg"></i></a>
+            <a href="/adm/cadastrar-usuario/" class="btn btn-adm f600">Adicionar Novo <i
+                    class="bi bi-plus icon-lg"></i></a>
         </div>
         <div class="col-12">
             <div class="card">
@@ -54,8 +55,19 @@
                                     <td></td>
                                     <td></td>
                                     <td>
-                                        <a href="{% url 'editarUsuarioAdm' usuario.id %}" class="btn btn-primary btn-sm me-2"><i class="bi bi-pencil"></i> Editar</a>
-                                        <button class="btn btn-danger btn-sm btn-excluir-usuario" data-id="{{ usuario.id }}"><i class="bi bi-trash"></i> Excluir</button>
+                                    <td>
+                                        {% if usuario.usuario.is_superuser %}
+                                        <span class="badge bg-success">Administrador</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Usuário</span>
+                                        {% endif %}
+                                    </td>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'editarUsuarioAdm' usuario.id %}"
+                                            class="btn btn-primary btn-sm me-2"><i class="bi bi-pencil"></i> Editar</a>
+                                        <button class="btn btn-danger btn-sm btn-excluir-usuario"
+                                            data-id="{{ usuario.id }}"><i class="bi bi-trash"></i> Excluir</button>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -74,10 +86,11 @@
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
                 <h5 class="modal-title" id="erroModalLabel">Erro!</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body" id="erroModalBody">
-                </div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
             </div>
@@ -90,10 +103,11 @@
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
                 <h5 class="modal-title" id="sucessoModalLabel">Sucesso!</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body" id="sucessoModalBody">
-                </div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
             </div>
@@ -103,63 +117,63 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-    'use strict'
+        'use strict'
 
-    // Obtenha as referências aos elementos do modal FORA do fetch
-    const erroModalElement = document.getElementById('erroModal');
-    const erroModal = erroModalElement ? new bootstrap.Modal(erroModalElement) : null;
-    const erroModalBody = document.getElementById('erroModalBody');
-    const sucessoModalElement = document.getElementById('sucessoModal');
-    const sucessoModal = sucessoModalElement ? new bootstrap.Modal(sucessoModalElement) : null;
-    const sucessoModalBody = document.getElementById('sucessoModalBody');
+        // Obtenha as referências aos elementos do modal FORA do fetch
+        const erroModalElement = document.getElementById('erroModal');
+        const erroModal = erroModalElement ? new bootstrap.Modal(erroModalElement) : null;
+        const erroModalBody = document.getElementById('erroModalBody');
+        const sucessoModalElement = document.getElementById('sucessoModal');
+        const sucessoModal = sucessoModalElement ? new bootstrap.Modal(sucessoModalElement) : null;
+        const sucessoModalBody = document.getElementById('sucessoModalBody');
 
-    function excluirProfissional(profissionalId) {
-        const confirmarExclusao = confirm(`Tem certeza que deseja excluir o profissional com ID ${profissionalId}?`);
+        function excluirProfissional(profissionalId) {
+            const confirmarExclusao = confirm(`Tem certeza que deseja excluir o profissional com ID ${profissionalId}?`);
 
-        if (confirmarExclusao) {
-            fetch(`/api/profissionais/${profissionalId}/`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log(`profissional com ID ${profissionalId} excluído com sucesso.`);
-                    if (sucessoModal && sucessoModalBody) {
-                        sucessoModalBody.textContent = 'profissional excluído com sucesso!';
-                        sucessoModal.show();
-                    }
-                    // Opcional: Recarregue a lista de profissionals ou remova o item da UI
-                } else {
-                    return response.json().then(errorData => {
-                        console.error(`Erro ao excluir profissional com ID ${profissionalId}:`, errorData);
+            if (confirmarExclusao) {
+                fetch(`/api/profissionais/${profissionalId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log(`profissional com ID ${profissionalId} excluído com sucesso.`);
+                            if (sucessoModal && sucessoModalBody) {
+                                sucessoModalBody.textContent = 'profissional excluído com sucesso!';
+                                sucessoModal.show();
+                            }
+                            // Opcional: Recarregue a lista de profissionals ou remova o item da UI
+                        } else {
+                            return response.json().then(errorData => {
+                                console.error(`Erro ao excluir profissional com ID ${profissionalId}:`, errorData);
+                                if (erroModal && erroModalBody) {
+                                    erroModalBody.textContent = `Erro ao excluir profissional: ${JSON.stringify(errorData)}`;
+                                    erroModal.show();
+                                }
+                                throw new Error(JSON.stringify(errorData));
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error(`Erro ao enviar requisição de exclusão para o profissional com ID ${profissionalId}:`, error);
                         if (erroModal && erroModalBody) {
-                            erroModalBody.textContent = `Erro ao excluir profissional: ${JSON.stringify(errorData)}`;
+                            erroModalBody.textContent = 'Ocorreu um erro ao tentar excluir o profissional. Por favor, tente novamente.';
                             erroModal.show();
                         }
-                        throw new Error(JSON.stringify(errorData));
                     });
-                }
-            })
-            .catch(error => {
-                console.error(`Erro ao enviar requisição de exclusão para o profissional com ID ${profissionalId}:`, error);
-                if (erroModal && erroModalBody) {
-                    erroModalBody.textContent = 'Ocorreu um erro ao tentar excluir o profissional. Por favor, tente novamente.';
-                    erroModal.show();
-                }
-            });
+            }
         }
-    }
 
 
-    const botoesExcluir = document.querySelectorAll('.btn-excluir-usuario');
-    botoesExcluir.forEach(botao => {
-        botao.addEventListener('click', function() {
-            const id = this.dataset.id;
-            excluirProfissional(id);
+        const botoesExcluir = document.querySelectorAll('.btn-excluir-usuario');
+        botoesExcluir.forEach(botao => {
+            botao.addEventListener('click', function () {
+                const id = this.dataset.id;
+                excluirProfissional(id);
+            });
         });
     });
-});
 </script>
 {% endblock %}

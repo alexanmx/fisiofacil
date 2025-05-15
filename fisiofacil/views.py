@@ -14,19 +14,23 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .permissions import IsProfissionalOrAdmin
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .permissions import IsAuthenticatedAndNoDelete
+from .permissions import IsAuthenticatedAndNoDelete, IsSuperUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.conf import settings
 from django.urls import reverse
 from django.contrib.auth import logout
+from .permissions import IsSuperUser
 
 import os
 
 
 class ProfissionalViewSet(viewsets.ModelViewSet):
-    queryset = Profissional.objects.all()
+    queryset = Profissional.objects.select_related('usuario').all()
     serializer_class = ProfissionalSerializer
+    permission_classes = [IsSuperUser]
+
+    
 
 class ServicoViewSet(viewsets.ModelViewSet):
     queryset = Servico.objects.all()
@@ -252,7 +256,12 @@ def indexAdm(request):
     else:
         return HttpResponse("Acesso não autorizado", status=401)
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def cadastrarUsuarioAdm(request):
+    if not request.user.is_superuser:
+        return HttpResponse("Acesso não autorizado", status=401)
     if 'jwt_token' in request.session:
         return render(request, 'profissional_cadastrarUsuario.html')
     else:
@@ -260,8 +269,10 @@ def cadastrarUsuarioAdm(request):
 
 def listarUsuarioAdm(request):
     if 'jwt_token' in request.session:
+        jwt_token = request.session['jwt_token']
         api_url = f'{settings.API_BASE_URL}/api/profissionais/'
-        response = requests.get(api_url)
+        headers = {'Authorization': f'Bearer {jwt_token}'}
+        response = requests.get(api_url, headers=headers)
         usuarios = response.json() if response.status_code == 200 else []
         return render(request, 'profissional_listarUsuario.html', {'usuarios': usuarios})
     else:

@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from rest_framework.permissions import BasePermission
 
 class IsProfissionalOrAdmin(permissions.BasePermission):
     """
@@ -29,4 +30,9 @@ class IsAuthenticatedAndNoDelete(permissions.BasePermission):
         if request.method == 'DELETE':
             return False
         return True
+    
+
+class IsSuperUser(BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated and request.user.is_superuser
 

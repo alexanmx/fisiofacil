@@ -11,20 +11,32 @@ class ClienteSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 class UsuarioSerializer(serializers.ModelSerializer):
+    is_superuser = serializers.BooleanField(default=False)
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'password']
+        fields = ['id', 'username', 'password', 'is_superuser']
         extra_kwargs = {
             'password': {'write_only': True},
-            'id': {'read_only': True},
+            'id': {'read_only': True}
         }
 
     def create(self, validated_data):
-        # use create_user para garantir hashing da senha
-        return User.objects.create_user(
-            username=validated_data['username'],
-            password=validated_data['password']
-        )
+        is_superuser = validated_data.pop('is_superuser', False)
+        # Converte string para booleano se necessário
+        if isinstance(is_superuser, str):
+            is_superuser = is_superuser.lower() == 'true'
+        if is_superuser:
+            user = User.objects.create_superuser(
+                username=validated_data['username'],
+                password=validated_data['password']
+            )
+        else:
+            user = User.objects.create_user(
+                username=validated_data['username'],
+                password=validated_data['password']
+            )
+        return user
 
 class ProfissionalSerializer(serializers.ModelSerializer):
     usuario = UsuarioSerializer()

@@ -11,7 +11,7 @@
 <div class="container-lg my-5">
     <div class="row">
         <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
-            <form id="cadastrarUsuario" class="needs-validation" novalidate>
+            <form id="cadastrarUsuario" class="needs-validation" novalidate>{% csrf_token %}
                 <div class="row g-3 g-lg-5">
                     <div class="col-md-12 mt-2">
                         <label for="usuario_nome" class="form-label f600">Nome*</label>
@@ -52,6 +52,12 @@
                         <label for="usuario_password" class="form-label f600">Senha*</label>
                         <input type="password" name="usuario[password]" id="usuario_password" class="form-control py-3"
                             placeholder="" required>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" name="usuario[is_superuser]" id="is_superuser" value="true">
+                            <label class="form-check-label" for="is_superuser">Profissional Administrador</label>
+                        </div>
                     </div>
                     <div class="col-12 text-center">
                         <button type="submit" class="btn btn-adm f600 btn-lg">Salvar</button>
@@ -153,7 +159,7 @@
                 fetch('/api/profissionais/', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(data),
                 })
