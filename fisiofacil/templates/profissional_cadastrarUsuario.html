@@ -3,6 +3,7 @@
 {% block titulo %}FisioFácil - Novo Profissional{% endblock %}
 
 {% block conteudo %}
+
 <div class="container-lg text-center mt-5">
     <h1 class="text-color text-center f700">Novo Profissional</h1>
     <p class="text-secondary">Informação do profissional</p>
@@ -106,6 +107,7 @@
     (() => {
         'use strict'
 
+        const jwtToken = "{{ jwt_token|escapejs }}";
         const form = document.getElementById('cadastrarUsuario');
         const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
         const erroModalBody = document.getElementById('erroModalBody');
@@ -159,7 +161,8 @@
                 fetch('/api/profissionais/', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + jwtToken,
                     },
                     body: JSON.stringify(data),
                 })

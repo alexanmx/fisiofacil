@@ -254,20 +254,23 @@ def indexAdm(request):
     if 'jwt_token' in request.session:
         return render(request, 'profissional_index.html')
     else:
-        return HttpResponse("Acesso não autorizado", status=401)
+        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
 
 from django.contrib.auth.decorators import login_required
 
 @login_required
 def cadastrarUsuarioAdm(request):
     if not request.user.is_superuser:
-        return HttpResponse("Acesso não autorizado", status=401)
+        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
     if 'jwt_token' in request.session:
-        return render(request, 'profissional_cadastrarUsuario.html')
+        return render(request, 'profissional_cadastrarUsuario.html', {'jwt_token': request.session['jwt_token']})
     else:
-        return HttpResponse("Acesso não autorizado", status=401)
+        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
 
+@login_required
 def listarUsuarioAdm(request):
+    if not request.user.is_superuser:
+        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
     if 'jwt_token' in request.session:
         jwt_token = request.session['jwt_token']
         api_url = f'{settings.API_BASE_URL}/api/profissionais/'
@@ -276,7 +279,7 @@ def listarUsuarioAdm(request):
         usuarios = response.json() if response.status_code == 200 else []
         return render(request, 'profissional_listarUsuario.html', {'usuarios': usuarios})
     else:
-        return HttpResponse("Acesso não autorizado", status=401)
+        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
 
 def editarUsuarioAdm(request, usuario_id):
     if 'jwt_token' in request.session:
@@ -288,13 +291,13 @@ def editarUsuarioAdm(request, usuario_id):
         else:
             return HttpResponse("Usuário não encontrado", status=404)
     else:
-        return HttpResponse("Acesso não autorizado", status=401)
+        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
 
 def cadastrarServicoAdm(request):
     if 'jwt_token' in request.session:
         return render(request, 'profissional_cadastrarServico.html')
     else:
-        return HttpResponse("Acesso não autorizado", status=401)
+        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
     
 def listarServicoAdm(request):
     if 'jwt_token' in request.session:
@@ -303,7 +306,7 @@ def listarServicoAdm(request):
         servicos = response.json() if response.status_code == 200 else []
         return render(request, 'profissional_listarServico.html', {'servicos': servicos})
     else:
-        return HttpResponse("Acesso não autorizado", status=401)
+        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
     
 def editarServicoAdm(request, servico_id):
     if 'jwt_token' in request.session:
@@ -315,7 +318,7 @@ def editarServicoAdm(request, servico_id):
         else:
             return HttpResponse("Serviço não encontrado", status=404)
     else:
-        return HttpResponse("Acesso não autorizado", status=401)
+        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
 
 def atribuirProfissionalAdm(request):
     if 'jwt_token' in request.session:
@@ -330,7 +333,7 @@ def atribuirProfissionalAdm(request):
 
         return render(request, 'profissional_atribuirProfissional.html', {'servicos': servicos, 'profissionais': profissionais})
     else:
-        return HttpResponse("Acesso não autorizado", status=401)
+        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
 
 def servicosProfissionalAdm(request):
     if 'jwt_token' in request.session:
@@ -339,14 +342,14 @@ def servicosProfissionalAdm(request):
         servicos = response.json() if response.status_code == 200 else []
         return render(request, 'profissional_listarServicosProfissionais.html', {'servicos': servicos})
     else:
-        return HttpResponse("Acesso não autorizado", status=401)
+        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
 
 def cadastrarAgendamentoAdm(request):
     if 'jwt_token' in request.session:
         profissional_servicos = ProfissionalServico.objects.filter(status=True)
         return render(request, 'profissional_cadastrarAgendamento.html', {'profissional_servicos': profissional_servicos})
     else:
-        return HttpResponse("Acesso não autorizado", status=401)
+        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
 
 def listarAgendamentoAdm(request):
     if 'jwt_token' in request.session:
@@ -361,7 +364,7 @@ def cadastrarClienteAdm(request):
     if 'jwt_token' in request.session:
         return render(request, 'profissional_cadastrarCliente.html')
     else:
-        return HttpResponse("Acesso não autorizado", status=401)
+        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
 
 def listarClienteAdm(request):
     if 'jwt_token' in request.session:
@@ -370,4 +373,4 @@ def listarClienteAdm(request):
         clientes = response.json() if response.status_code == 200 else []
         return render(request, 'profissional_listarCliente.html', {'clientes': clientes})
     else:
-        return HttpResponse("Acesso não autorizado", status=401)
+        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})

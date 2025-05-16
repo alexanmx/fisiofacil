@@ -4,10 +4,9 @@
             <div class="container-fluid">
                 <a class="navbar-brand" href="/" aria-label="FisioFácil - Ir para a página inicial">FisioFácil<br>
                     <small class="brand-small">Área do Profissional</small></a>
-                
-                <button class="navbar-toggler" type="button"
-                    data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar"
-                    aria-label="Toggle navigation">
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
@@ -17,45 +16,55 @@
                         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
                     <div class="offcanvas-body">
-                        <ul class="navbar-nav justify-content-end  justify-content-lg-start flex-grow-1 pe-3" role="menubar">
+                        <ul class="navbar-nav justify-content-end justify-content-lg-start flex-grow-1 pe-3"
+                            role="menubar">
                             <li class="nav-item" role="menuitem">
                                 <a class="nav-link" href="/adm/">Home</a>
                             </li>
                             <li class="nav-item dropdown" role="menuitem">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false" aria-haspopup="true" aria-controls="agendamentos-menu">
                                     <i class="bi bi-clock"></i> Agendamentos
                                 </a>
-                                <ul class="dropdown-menu">
+                                <ul class="dropdown-menu" id="agendamentos-menu" aria-labelledby="agendamentos-menu">
                                     <li><a class="dropdown-item" href="/adm/cadastrar-agendamento/">Cadastrar</a></li>
                                     <li><a class="dropdown-item" href="/adm/listar-agendamento/">Consultar</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown" role="menuitem">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false" aria-haspopup="true" aria-controls="servicos-menu">
                                     <i class="bi bi-stack"></i> Serviços
                                 </a>
-                                <ul class="dropdown-menu">
+                                <ul class="dropdown-menu" id="servicos-menu" aria-labelledby="servicos-menu">
                                     <li><a class="dropdown-item" href="/adm/cadastrar-servico/">Cadastrar</a></li>
                                     <li><a class="dropdown-item" href="/adm/listar-servico/">Consultar</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="/adm/atribuir-profissional/">Atribuir Profissional</a></li>
-                                    <li><a class="dropdown-item" href="/adm/servicos-profissionais/">Serviços x Profissionais</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="/adm/atribuir-profissional/">Atribuir
+                                            Profissional</a></li>
+                                    <li><a class="dropdown-item" href="/adm/servicos-profissionais/">Serviços x
+                                            Profissionais</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown" role="menuitem">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false" aria-haspopup="true" aria-controls="profissionais-menu">
                                     <i class="bi bi-mortarboard"></i> Profissionais
                                 </a>
-                                <ul class="dropdown-menu">
+                                <ul class="dropdown-menu" id="profissionais-menu" aria-labelledby="profissionais-menu">
                                     <li><a class="dropdown-item" href="/adm/cadastrar-usuario/">Cadastrar</a></li>
                                     <li><a class="dropdown-item" href="/adm/listar-usuario/">Consultar</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown" role="menuitem">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false" aria-haspopup="true" aria-controls="clientes-menu"
+                                    aria-label="Clientes">
                                     <i class="bi bi-people-fill"></i> Clientes
                                 </a>
-                                <ul class="dropdown-menu">
+                                <ul class="dropdown-menu" id="clientes-menu" aria-labelledby="clientes-menu">
                                     <li><a class="dropdown-item" href="/adm/cadastrar-cliente/">Cadastrar</a></li>
                                     <li><a class="dropdown-item" href="/adm/listar-cliente/">Consultar</a></li>
                                 </ul>
@@ -64,7 +73,8 @@
                         <div
                             class="d-flex align-items-lg-center flex-column flex-lg-row text-start justify-content-start">
 
-                            <span class="small">{{ user.username }}</span> <i class="bi bi-person-circle h3 m-0 mx-3 text-secondary"></i> 
+                            <span class="small">{{ user.username }}</span> <i
+                                class="bi bi-person-circle h3 m-0 mx-3 text-secondary"></i>
                             <a href="/logout/" class="btn btn-adm my-2 my-lg-0 f600">Sair <i
                                     class="bi bi-arrow-right"></i></a>
                         </div>
