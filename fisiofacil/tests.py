@@ -1,12 +1,7 @@
-from django.test import TestCase, Client
-from django.contrib.auth.models import User
+from django.test import SimpleTestCase
 
-class SimpleViewTest(TestCase):
-    def setUp(self):
-        self.client = Client()
-        self.user = User.objects.create_superuser(username='admin', password='admin123', email='admin@test.com')
-        self.client.login(username='admin', password='admin123')
-
-    def test_index_adm_status_code(self):
-        response = self.client.get('/adm/')
+class TemplateRenderTest(SimpleTestCase):
+    def test_index_template_used(self):
+        response = self.client.get('/')
+        self.assertTemplateUsed(response, 'index.html')
         self.assertEqual(response.status_code, 200)
