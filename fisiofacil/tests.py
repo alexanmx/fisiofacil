@@ -1,3 +1,6 @@
-from django.test import TestCase
+import unittest
 
-# Create your tests here.
+class HelloWordTestCase(unittest.TestCase):
+    
+    def test_hello_world(self):
+        self.assertEqual(1, 1)

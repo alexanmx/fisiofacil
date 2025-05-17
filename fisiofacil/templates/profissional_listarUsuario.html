@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block titulo %}FisioFácil - Profissionais{% endblock %}
+
+{% block conteudo %}
+<div class="container-lg text-center mt-5">
+    <h1 class="text-color text-center f700">Profissionais</h1>
+</div>
+
+<div class="container-xxl text-center mt-5">
+    <div class="row">
+        <div class="col-lg-8 py-3">
+            <form class="d-flex justify-content-between">
+                <div class="row row-cols-lg-auto g-3 align-items-center">
+                    <div class="col-8">
+                        <input type="text" class="form-control" id="searchCliente" placeholder="Nome do profissional">
+                    </div>
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-4 py-3 text-end">
+            <a href="/adm/cadastrar-usuario/" class="btn btn-adm f600">Adicionar Novo <i
+                    class="bi bi-plus icon-lg"></i></a>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Profissional</th>
+                                    <th scope="col">E-mail</th>
+                                    <th scope="col">Telefone</th>
+                                    <th scope="col">Especialidade</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Data de Criação</th>
+                                    <th scope="col">Data de Alteração</th>
+                                    <th scope="col">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for usuario in usuarios %}
+                                <tr>
+                                    <th scope="row">{{ usuario.id }}</th>
+                                    <td>{{ usuario.nome }}</td>
+                                    <td>{{ usuario.email }}</td>
+                                    <td>{{ usuario.telefone }}</td>
+                                    <td>{{ usuario.especialidade }}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                    <td>
+                                        {% if usuario.usuario.is_superuser %}
+                                        <span class="badge bg-success">Administrador</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Usuário</span>
+                                        {% endif %}
+                                    </td>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'editarUsuarioAdm' usuario.id %}"
+                                            class="btn btn-primary btn-sm me-2"><i class="bi bi-pencil"></i> Editar</a>
+                                        <button class="btn btn-danger btn-sm btn-excluir-usuario"
+                                            data-id="{{ usuario.id }}"><i class="bi bi-trash"></i> Excluir</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="erroModal" tabindex="-1" aria-labelledby="erroModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="erroModalLabel">Erro!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="erroModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sucessoModal" tabindex="-1" aria-labelledby="sucessoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="sucessoModalLabel">Sucesso!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="sucessoModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        'use strict'
+
+        // Obtenha as referências aos elementos do modal FORA do fetch
+        const erroModalElement = document.getElementById('erroModal');
+        const erroModal = erroModalElement ? new bootstrap.Modal(erroModalElement) : null;
+        const erroModalBody = document.getElementById('erroModalBody');
+        const sucessoModalElement = document.getElementById('sucessoModal');
+        const sucessoModal = sucessoModalElement ? new bootstrap.Modal(sucessoModalElement) : null;
+        const sucessoModalBody = document.getElementById('sucessoModalBody');
+
+        function excluirProfissional(profissionalId) {
+            const confirmarExclusao = confirm(`Tem certeza que deseja excluir o profissional com ID ${profissionalId}?`);
+
+            if (confirmarExclusao) {
+                fetch(`/api/profissionais/${profissionalId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log(`profissional com ID ${profissionalId} excluído com sucesso.`);
+                            if (sucessoModal && sucessoModalBody) {
+                                sucessoModalBody.textContent = 'profissional excluído com sucesso!';
+                                sucessoModal.show();
+                            }
+                            // Opcional: Recarregue a lista de profissionals ou remova o item da UI
+                        } else {
+                            return response.json().then(errorData => {
+                                console.error(`Erro ao excluir profissional com ID ${profissionalId}:`, errorData);
+                                if (erroModal && erroModalBody) {
+                                    erroModalBody.textContent = `Erro ao excluir profissional: ${JSON.stringify(errorData)}`;
+                                    erroModal.show();
+                                }
+                                throw new Error(JSON.stringify(errorData));
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error(`Erro ao enviar requisição de exclusão para o profissional com ID ${profissionalId}:`, error);
+                        if (erroModal && erroModalBody) {
+                            erroModalBody.textContent = 'Ocorreu um erro ao tentar excluir o profissional. Por favor, tente novamente.';
+                            erroModal.show();
+                        }
+                    });
+            }
+        }
+
+
+        const botoesExcluir = document.querySelectorAll('.btn-excluir-usuario');
+        botoesExcluir.forEach(botao => {
+            botao.addEventListener('click', function () {
+                const id = this.dataset.id;
+                excluirProfissional(id);
+            });
+        });
+    });
+</script>
+{% endblock %}

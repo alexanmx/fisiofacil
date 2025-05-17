@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block titulo %}FisioFácil - Agendamentos{% endblock %}
+
+{% block conteudo %}
+<div class="container-xxl text-center mt-5">
+    <h1 class="text-color text-center f700 h3">Agendamentos</h1>
+
+    <div class="row">
+        <div class="col-lg-8 py-3">
+            <form class="d-flex justify-content-between">
+                <div class="row row-cols-lg-auto g-3 align-items-center">
+                    
+                    <div class="col-8" style="position: relative;">
+                        <input type="text" class="form-control border border-secondary" placeholder="Pesquisar" style="padding-right: 2.5rem;">
+                        <i class="bi bi-search" style="position: absolute; right: 0.90rem; top: 50%; transform: translateY(-50%);"></i>
+                      </div>
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-outline-secondary">Filtrar <i class="bi bi-filter"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-4 py-3 text-end">
+            <a href="/adm/cadastrar-agendamento/" class="btn btn-adm f600">Adicionar Novo <i class="bi bi-plus icon-lg"></i></a>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Data</th>
+                                    <th scope="col">Horário</th>
+                                    <th scope="col">Cliente</th>
+                                    <th scope="col">Tratamento</th>
+                                    <th scope="col">Serviço</th>
+                                    <th scope="col">Profissional</th>
+                                    <th scope="col">Valor</th>
+                                    <th scope="col">Confirmada</th>
+                                    <th scope="col">Criado em</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for agendamento in agendamentos %}
+                                <tr>
+                                    <th scope="row">{{ agendamento.id }}</th>
+                                    
+                                    <td>{{ agendamento.data }}</td>
+                                    <td>{{ agendamento.hora }}</td>
+                                    <td>{{ agendamento.cliente.nome }}</td>
+                                    
+                                    <td></td>
+                                    <td>{{ agendamento.profissional_servico.servico_nome  }}</td>
+                                    <td>{{ agendamento.profissional_servico.profissional_nome  }}</td>
+                                    <td>{{ agendamento.taxa_formatada  }}</td>
+                                    <td>sim/não</td>
+                                    <td>{{ agendamento.criado_em }}</td>
+                                    <!-- <td>**DEBUG: {{ agendamento|pprint }}**</td> -->
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block titulo %}FisioFácil - Cadastrar Cliente{% endblock %}
+
+{% block conteudo %}
+<div class="container-lg text-center mt-5">
+    <h1 class="text-color text-center f700">Cadastro de Cliente</h1>
+    <p class="second-text-color">Informação do cliente.</p>
+</div>
+
+<div class="container-lg my-5">
+    <div class="row">
+        <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
+            <form id="cadastrarCliente" class="needs-validation" novalidate>
+                <div class="row g-3 g-lg-5">
+                    <div class="col-md-12 mt-2">
+                        <label for="usuario_nome" class="form-label f600">Nome*</label>
+                        <input type="text" name="nome" id="usuario_nome" class="form-control py-3"
+                            placeholder="Nome Completo" required>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="usuario_email" class="form-label f600">Email*</label>
+                        <input type="email" name="email" id="usuario_email" class="form-control py-3"
+                            placeholder="exemplo@exemplo.com" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="usuario_telefone" class="form-label f600">Telefone*</label>
+                        <input type="text" name="telefone" id="usuario_telefone" class="form-control py-3"
+                            placeholder="(99)99999-9999" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="usuario_cpf" class="form-label f600">CPF*</label>
+                        <input type="text" name="cpf" id="usuario_cpf" class="form-control py-3" placeholder=""
+                            required>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="dataNascimento" class="form-label f600">Data de Nascimento*</label>
+                        <input type="date" name="data_nascimento" id="dataNascimento" class="form-control py-3"
+                            required>
+                    </div>
+
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-adm f600 btn-lg">Salvar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="erroModal" tabindex="-1" aria-labelledby="erroModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="erroModalLabel">Erro!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="erroModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sucessoModal" tabindex="-1" aria-labelledby="sucessoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="sucessoModalLabel">Sucesso!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="sucessoModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (() => {
+        'use strict'
+
+        const form = document.getElementById('cadastrarCliente');
+        const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
+        const erroModalBody = document.getElementById('erroModalBody');
+        const sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
+        const sucessoModalBody = document.getElementById('sucessoModalBody');
+
+        // CPF
+        const inputCPF = document.getElementById("usuario_cpf");
+        inputCPF.addEventListener("keyup", formatarCPF);
+        function formatarCPF(e) {
+            var v = e.target.value.replace(/\D/g, "");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            e.target.value = v;
+        }
+        // CPF
+
+        // telefone
+        const inputTEL = document.getElementById("usuario_telefone");
+        inputTEL.addEventListener("keyup", formatarTelefone);
+        function formatarTelefone(e) {
+            var v = e.target.value.replace(/\D/g, "");
+            v = v.replace(/^(\d\d)(\d)/g, "($1)$2");
+            v = v.replace(/(\d{5})(\d)/, "$1-$2");
+            e.target.value = v;
+        }
+        // telefone
+
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            } else {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+                const data = {
+                    usuario: {}
+                };
+                formData.forEach((value, key) => {
+                    if (key.startsWith('usuario[')) {
+                        const subKey = key.substring(8, key.length - 1);
+                        data.usuario[subKey] = value;
+
+                    } else {
+                        data[key] = value;
+                    }
+                });
+                console.log('Dados a serem enviados:', data);
+
+                fetch('/api/clientes/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(errorData => {
+                                const errorMessage = typeof errorData === 'object' ? JSON.stringify(errorData) : errorData;
+                                erroModalBody.textContent = `Erro na requisição: ${errorMessage}`;
+                                erroModal.show();
+                                throw new Error(JSON.stringify(errorData));
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        console.log('Cliente criado:', result);
+                        sucessoModalBody.textContent = 'Cliente criado com sucesso!';
+                        sucessoModal.show();
+                        form.reset();
+                        form.classList.remove('was-validated');
+                    })
+                    .catch(error => {
+                        console.error('Erro ao criar Cliente:', error);
+                        let errorMessage = 'Ocorreu um erro ao criar o Cliente. Por favor, tente novamente.';
+                        try {
+                            const errorData = JSON.parse(error.message);
+                            errorMessage = `Detalhes do erro: ${JSON.stringify(errorData)}`;
+                            console.log('Detalhes do erro:', errorData);
+                        } catch (e) {
+                            console.log('Erro ao analisar detalhes do erro:', e);
+                            errorMessage = `Ocorreu um erro inesperado: ${error.message}`;
+                        }
+                        erroModalBody.textContent = errorMessage;
+                        erroModal.show();
+                    });
+            }
+            form.classList.add('was-validated');
+        }, false);
+    })();
+</script>
+{% endblock %}

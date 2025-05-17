@@ -1,6 +1,8 @@
 from pathlib import Path
 import os
 
+API_BASE_URL = os.getenv('API_BASE_URL', 'http://127.0.0.1:8000/')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -12,9 +14,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-jvj32td*rr7o@!0pi!=xuexd2h*pzylz49-d$j*^ahm5otdg*r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', False)
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['fisiofacil.onrender.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -27,17 +30,28 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',  # Adicione a aplicação rest_framework ao projeto
-    'fisiofacil',  # Adicione a aplicação fisiofacil ao projeto
+    'fisiofacil',  # Adicione a aplicação fisiofacil ao projeto,
+    'rest_framework_simplejwt',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://fisiofacil.onrender.com",
+    "http://127.0.1:8000",
+    "http://localhost:8000",
+    'https://acessos.vlibras.gov.br',
 ]
 
 ROOT_URLCONF = 'fisiofacil_api.urls'
@@ -71,14 +85,26 @@ WSGI_APPLICATION = 'fisiofacil_api.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'fisiofacil_api',
+#         'USER': 'default_user',
+#         'PASSWORD': 'default_password',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'fisiofacil_api',
-        'USER': 'default_user',
-        'PASSWORD': 'default_password',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('DATABASE_NAME', 'fisiofacil_api'),
+        'USER': os.environ.get('DATABASE_USER', 'fisiofacil_api_user'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'qazkTf4RYgGW4rRzG9YhXxnwUclaToYz'),
+        'HOST': os.environ.get('DATABASE_HOST', 'dpg-d0fo9449c44c73bhanrg-a.oregon-postgres.render.com'),
+        'PORT': os.environ.get('DATABASE_PORT', '5432'), # Define um valor padrão para a porta
     }
 }
 
@@ -104,12 +130,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
+LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -118,11 +141,34 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'fisiofacil/static'),
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS': None
+}
+
+LOGIN_URL = '/login/'
+
+from datetime import timedelta
+SIMPLE_JWT = {
+    # 'JWT_VERIFY_EXPIRATION': False,  # desabilita a verificação de expiração
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=99999),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'BLACKLIST_AFTER_ROTATION': False,
+    'SIGNING_KEY': os.environ.get('SECRET_KEY_JWT', 'INSECURE'),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
