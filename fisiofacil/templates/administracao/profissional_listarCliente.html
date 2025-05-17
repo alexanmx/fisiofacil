@@ -1,10 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'template/base.html' %}
 
 {% block titulo %}FisioFácil - Clientes{% endblock %}
 
 {% block conteudo %}
 <div class="container-lg text-center mt-5">
-    <h1 class="text-color text-center f700">Clientes</h1>
+    <h1 class="text-color text-center f700">Pacientes</h1>
 </div>
 
 <div class="container-xxl text-center mt-5">
@@ -13,7 +13,7 @@
             <form class="d-flex justify-content-between">
                 <div class="row row-cols-lg-auto g-3 align-items-center">
                     <div class="col-8">
-                        <input type="text" class="form-control" id="searchCliente" placeholder="Nome do cliente">
+                        <input type="text" class="form-control" id="searchCliente" placeholder="Nome do paciente">
                     </div>
                     <div class="col-4">
                         <button type="submit" class="btn btn-primary">Filtrar</button>

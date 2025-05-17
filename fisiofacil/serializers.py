@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from .models import Profissional, Servico, ProfissionalServico, Agendamento, Cliente, Prontuario
+from .models import Pagamento, Profissional, Servico, ProfissionalServico, Agendamento, Cliente, Prontuario
 from django.contrib.auth.models import User
 from django.utils.formats import localize
 
@@ -74,18 +74,7 @@ class ProfissionalServicoSerializer(serializers.ModelSerializer):
     servico_nome = serializers.SerializerMethodField()
     servico_desc = serializers.SerializerMethodField()
 
-    taxa = serializers.DecimalField(max_digits=10, decimal_places=2)
-    taxa_formatada = serializers.SerializerMethodField(read_only=True)
-
-    data_inicio = serializers.DateField(format="%d/%m/%Y")
-    data_fim = serializers.DateField(format="%d/%m/%Y")
-
-    def get_taxa_formatada(self, obj):
-        return f"R$ {localize(obj.valor)}"
-
-    def get_taxa(self, obj):
-        # Formata o taxa da taxa como moeda brasileira
-        return f"R$ {localize(obj.taxa)}"
+    
 
     def get_profissional_nome(self, obj):
         return obj.profissional.nome
@@ -120,15 +109,23 @@ class ProfissionalServicoBasicoSerializer(serializers.ModelSerializer):
         fields = ['id', 'profissional_nome', 'servico_nome', 'servico_valor', 'taxa']
         read_only_fields = ['id', 'profissional_nome', 'servico_nome', 'servico_valor', 'taxa']
 
+class PagamentoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pagamento
+        fields = '__all__'
+        read_only_fields = ['id', 'data_criacao', 'agendamento'] # 'agendamento' será definido no create
+
 class AgendamentoSerializer(serializers.ModelSerializer):
-    profissional_servico = ProfissionalServicoBasicoSerializer(read_only=True)
-    cliente = ClienteSerializer(read_only=True)
+    profissional_servico_info = ProfissionalServicoBasicoSerializer(read_only=True, source='profissional_servico')
+    profissional_servico = serializers.PrimaryKeyRelatedField(queryset=ProfissionalServico.objects.all(), write_only=True)
+    cliente_info = ClienteSerializer(read_only=True, source='cliente')
     cpf = serializers.CharField(write_only=True, required=False)
     data = serializers.DateField(format="%d/%m/%Y")
     hora = serializers.TimeField(format="%H:%M")
     taxa_formatada = serializers.SerializerMethodField()
     tratamento = serializers.CharField(required=False, allow_blank=True)
     status = serializers.CharField(required=False, allow_blank=True)
+    pagamento = PagamentoSerializer(read_only=True)
 
     def get_taxa_formatada(self, obj):
         # Formata o valor da taxa como moeda brasileira
@@ -138,8 +135,27 @@ class AgendamentoSerializer(serializers.ModelSerializer):
     cpf = serializers.CharField(write_only=True)
 
     def validate(self, data):
+        if 'profissional_servico' not in data:
+            raise ValidationError("O campo profissional_servico é obrigatório.")
+
+        profissional_servico_id = data['profissional_servico']
+        if isinstance(profissional_servico_id, str) and profissional_servico_id.isdigit():
+            try:
+                profissional_servico = ProfissionalServico.objects.get(pk=int(profissional_servico_id))
+                data['profissional_servico'] = profissional_servico # Substitui o ID pelo objeto para uso posterior
+            except ProfissionalServico.DoesNotExist:
+                raise ValidationError("Profissional e serviço não encontrados.")
+        elif isinstance(profissional_servico_id, ProfissionalServico):
+            profissional_servico = profissional_servico_id
+        else:
+            raise ValidationError("Valor inválido para profissional_servico.")
+
+        if 'hora' not in data:
+            raise ValidationError("O campo hora é obrigatório.")
         hora = data['hora']
-        profissional_servico = data['profissional_servico']
+
+        if 'data' not in data:
+            raise ValidationError("O campo data é obrigatório.")
         data_agendamento = data['data']
 
         if hora.minute != 0:
@@ -158,9 +174,11 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        print('validated_data:', validated_data)
         # Obtemos o CPF do cliente que vem na requisição
         cpf = validated_data.pop('cpf')
+
+        # Extrai o profissional_servico do validated_data
+        profissional_servico = validated_data.get('profissional_servico')
 
         # Verificamos se o cliente já existe no sistema
         try:
@@ -170,13 +188,17 @@ class AgendamentoSerializer(serializers.ModelSerializer):
 
         # Agora associamos o cliente ao agendamento
         agendamento = Agendamento.objects.create(cliente=cliente, **validated_data)
+
+        # Cria o pagamento associado
+        Pagamento.objects.create(agendamento=agendamento, valor=profissional_servico.taxa)
+
         return agendamento
 
     class Meta:
         model = Agendamento
-        fields = ['id', 'cliente', 'cpf', 'profissional_servico', 'data', 'hora', 'criado_em', 'taxa_formatada', 'status', 'tratamento']
-        read_only_fields = ['id', 'criado_em', 'cliente', 'profissional_servico', 'data', 'taxa_formatada'] # Tornar nested read-only
-        write_only_fields = ['cpf']
+        fields = ['id', 'cliente_info', 'cpf', 'profissional_servico', 'profissional_servico_info', 'data', 'hora', 'criado_em', 'taxa_formatada', 'status', 'tratamento', 'pagamento']
+        read_only_fields = ['id', 'criado_em', 'cliente_info', 'profissional_servico_info', 'data', 'taxa_formatada', 'pagamento']
+        write_only_fields = ['cpf', 'profissional_servico'] # 'profissional_servico' agora é write_only
 
 class ProntuarioSerializer(serializers.ModelSerializer):
     class Meta:

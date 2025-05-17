@@ -35,9 +35,9 @@
 
     <!-- se usuario estiver autenticado include menu2.html -->
     {% if user.is_authenticated %}
-    {% include 'menu_profissional.html' %}
+    {% include 'template/menu_profissional.html' %}
     {% else %}
-    {% include 'menu.html' %}
+    {% include 'template/menu.html' %}
     {% endif %}
 
     <main>
