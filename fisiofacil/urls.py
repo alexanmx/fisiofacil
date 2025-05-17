@@ -22,9 +22,14 @@ urlpatterns = [
     path('adm/editar-servico/<int:servico_id>/', views.editarServicoAdm, name='editarServicoAdm'),
     path('adm/atribuir-profissional/', views.atribuirProfissionalAdm, name='atribuirProfissionalAdm'),
     path('adm/servicos-profissionais/', views.servicosProfissionalAdm, name='servicosProfissionalAdm'),
+
     path('adm/cadastrar-agendamento/', views.cadastrarAgendamentoAdm, name='cadastrarAgendamentoAdm'),
     path('adm/listar-agendamento/', views.listarAgendamentoAdm, name='listarAgendamentoAdm'),
+    path('adm/visualizar-agendamento/<int:agendamento_id>/', views.verAgendamentoAdm, name='verAgendamentoAdm'),
 
     path('adm/cadastrar-cliente/', views.cadastrarClienteAdm, name='cadastrarClienteAdm'),
     path('adm/listar-cliente/', views.listarClienteAdm, name='listarClienteAdm'),
+
+    path('adm/listar-pagamentos/', views.listarPagamentoAdm, name='listarPagamentoAdm'),
+
 ]

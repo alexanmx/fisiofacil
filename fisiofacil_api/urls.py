@@ -16,6 +16,7 @@ router.register(r'profissional-servicos-ativos', views.ProfissionalServicoAtivoV
 router.register(r'agendamentos', views.AgendamentoViewSet)
 router.register(r'clientes', views.ClienteViewSet)
 router.register(r'prontuarios', views.ProntuarioViewSet),
+router.register(r'pagamentos', views.PagamentoViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
