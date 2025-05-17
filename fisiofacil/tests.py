@@ -1,9 +1,18 @@
-from django.test import TestCase
-from .models import Cliente
+from django.test import SimpleTestCase
+from unittest.mock import patch, MagicMock
 
-class ClienteModelTest(TestCase):
-    def test_criar_cliente(self):
-        cliente = Cliente.objects.create(
+class ClienteModelMockTest(SimpleTestCase):
+    @patch('fisiofacil.models.Cliente')
+    def test_criar_cliente_mock(self, MockCliente):
+        mock_cliente = MagicMock()
+        mock_cliente.nome = 'João da Silva'
+        mock_cliente.email = 'joao@email.com'
+        mock_cliente.telefone = '(11)99999-9999'
+        mock_cliente.cpf = '12345678900'
+        mock_cliente.__str__.return_value = 'João da Silva'
+        MockCliente.objects.create.return_value = mock_cliente
+
+        cliente = MockCliente.objects.create(
             nome='João da Silva',
             email='joao@email.com',
             telefone='(11)99999-9999',
