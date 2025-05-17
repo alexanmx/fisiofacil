@@ -29,31 +29,38 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Data</th>
-                                    <th scope="col">Cliente</th>
-                                    <th scope="col">Agendamento</th>
-                                    <th scope="col">Forma de Pagamento</th>
                                     <th scope="col">Valor</th>
-                                    <th scope="col">Observações</th>
+                                    <th scope="col">Tipo Pagamento</th>
                                     <th scope="col">Status</th>
+                                    <th scope="col">Agendamento</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for pagamento in pagamentos %}
                                 <tr>
                                     <th scope="row">{{ pagamento.id }}</th>
-                                    
-                                    <td>{{ pagamento.data }}</td>
-                                    <td>{{ pagamento.hora }}</td>
-                                    <td>{{ pagamento.cliente.nome }}</td>
-                                    
-                                    <td></td>
-                                    <td>{{ pagamento.profissional_servico.servico_nome  }}</td>
-                                    <td>{{ pagamento.profissional_servico.profissional_nome  }}</td>
-                                    <td>{{ pagamento.taxa_formatada  }}</td>
-                                    <td>sim/não</td>
-                                    <td>{{ pagamento.criado_em }}</td>
-                                    <!-- <td>**DEBUG: {{ pagamento|pprint }}**</td> -->
+                                    <td>{{ pagamento.valor }}</td>
+                                    <td>{{ pagamento.metodo_pagamento }}</td>
+                                    <td>
+                                        {% if pagamento.status == 'agendado' %}
+                                            <span class="badge bg-warning text-dark">Agendado</span>
+                                        {% elif pagamento.status == 'confirmado' %}
+                                            <span class="badge bg-success">Confirmado</span>
+                                        {% elif pagamento.status == 'cancelado' or pagamento.status == 'cancelado_pelo_cliente' %}
+                                            <span class="badge bg-secondary">Cancelado</span>
+                                        {% elif pagamento.status == 'realizado' %}
+                                            <span class="badge bg-primary">Realizado</span>
+                                        {% elif pagamento.status == 'nao_compareceu' %}
+                                            <span class="badge bg-secondary">Não Compareceu</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary text-white">{{pagamento.status}}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="/adm/visualizar-agendamento/{{ pagamento.agendamento }}/" class="btn btn-link">
+                                            {{ pagamento.agendamento }}
+                                        </a>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

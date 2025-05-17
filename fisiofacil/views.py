@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 from datetime import datetime, timedelta
 import requests
 from django.shortcuts import render, redirect
-from .models import Profissional, Servico, ProfissionalServico, Agendamento, Cliente, Prontuario
-from .serializers import ProfissionalSerializer, ServicoSerializer, ProfissionalServicoSerializer, ProfissionalServicoDetalhadoSerializer, AgendamentoSerializer, ProntuarioSerializer, ClienteSerializer
+from .models import Profissional, Servico, ProfissionalServico, Agendamento, Cliente, Prontuario, Pagamento
+from .serializers import ProfissionalSerializer, ServicoSerializer, ProfissionalServicoSerializer, ProfissionalServicoDetalhadoSerializer, AgendamentoSerializer, ProntuarioSerializer, ClienteSerializer, PagamentoSerializer
 from .forms import AgendamentoForm
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login
@@ -138,6 +138,9 @@ class DeletarAgendamentoView(APIView):
         agendamento.save()
         return Response({"detail": "Agendamento cancelado com sucesso."}, status=status.HTTP_204_NO_CONTENT)    
 
+class PagamentoViewSet(viewsets.ModelViewSet):
+    queryset = Pagamento.objects.all()
+    serializer_class = PagamentoSerializer
 
 # Views para renderização de páginas HTML com dados da API
 def index(request):
@@ -334,6 +337,21 @@ def cadastrarAgendamentoAdm(request):
     else:
         return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
 
+def verAgendamentoAdm(request, agendamento_id):
+    if 'jwt_token' in request.session:
+        jwt_token = request.session['jwt_token']
+        headers = {'Authorization': f'Bearer {jwt_token}'}
+        api_url = f'{settings.API_BASE_URL}/api/agendamentos/{agendamento_id}/'
+        response = requests.get(api_url, headers=headers)
+        if response.status_code == 200:
+            agendamento = response.json()
+            return render(request, 'administracao/profissional_verAgendamento.html', {'agendamento': agendamento})
+        else:
+            return HttpResponse("Agendamento não encontrado", status=404)
+    else:
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
+
+
 def listarAgendamentoAdm(request):
     if 'jwt_token' in request.session:
         jwt_token = request.session['jwt_token']
@@ -355,5 +373,16 @@ def listarClienteAdm(request):
         response = requests.get(api_url)
         clientes = response.json() if response.status_code == 200 else []
         return render(request, 'administracao/profissional_listarCliente.html', {'clientes': clientes})
+    else:
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
+    
+def listarPagamentoAdm(request):
+    if 'jwt_token' in request.session:
+        jwt_token = request.session['jwt_token']
+        headers = {'Authorization': f'Bearer {jwt_token}'}
+        api_url = f'{settings.API_BASE_URL}/api/pagamentos/'
+        response = requests.get(api_url, headers=headers)
+        pagamentos = response.json() if response.status_code == 200 else []
+        return render(request, 'administracao/profissional_listarPagamentos.html', {'pagamentos': pagamentos})
     else:
         return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})

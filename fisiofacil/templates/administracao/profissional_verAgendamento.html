@@ -1,0 +1,86 @@
+{% extends 'template/base.html' %}
+
+{% block titulo %}FisioFácil - Painel Administrativo{% endblock %}
+
+{% block conteudo %}
+<div class="container-lg text-center mt-5">
+    <h1 class="text-color text-center f700">Consulta de Agendamento</h1>
+</div>
+
+<div class="container-lg my-5">
+    <div class="row">
+        <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
+            <form id="agendamento-form" class="row g-3 needs-validation" novalidate>
+
+                <div class="col-md-3">
+                    <label for="data" class="form-label f600">Data</label>
+                    <input type="text" class="form-control py-3" value="{{agendamento.data}}" disabled>
+                </div>
+                <div class="col-md-3">
+                    <label for="hora" class="form-label f600">Horário</label>
+                    <input type="text" class="form-control py-3" value="{{agendamento.hora}}" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label for="hora" class="form-label f600">Status</label>
+                    <input type="text" class="form-control py-3" value="{{agendamento.status}}" disabled>
+                </div>
+
+                <div class="col-12">
+                    <hr>
+                </div>
+
+                <div class="col-12">
+                    <label for="profissional_servico" class="form-label f600">Serviço</label>
+                    <input type="text" class="form-control py-3"
+                        value="{{agendamento.profissional_servico_info.servico_nome}}" disabled>
+                </div>
+                <div class="col-12">
+                    <label for="profissional_servico" class="form-label f600">Profissional</label>
+                    <input type="text" class="form-control py-3"
+                        value="{{agendamento.profissional_servico_info.profissional_nome}}" disabled>
+                </div>
+
+                <div class="col-12">
+                    <hr>
+                </div>
+
+                <div class="col-12">
+                    <label for="profissional_servico" class="form-label f600">Cliente</label>
+                    <input type="text" class="form-control py-3"
+                        value="{{agendamento.cliente_info.nome}}" disabled>
+                </div>
+                <div class="col-8">
+                    <label for="profissional_servico" class="form-label f600">E-mail</label>
+                    <input type="text" class="form-control py-3"
+                        value="{{agendamento.cliente_info.email}}" disabled>
+                </div>
+                <div class="col-4">
+                    <label for="profissional_servico" class="form-label f600">Telefone</label>
+                    <input type="text" class="form-control py-3"
+                        value="{{agendamento.cliente_info.telefone}}" disabled>
+                </div>
+
+                <div class="col-12">
+                    <hr>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="data" class="form-label f600">Valor</label>
+                    <input type="text" class="form-control py-3"
+                        value="{{agendamento.pagamento.valor}}" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label for="data" class="form-label f600">Forma de Pagamento</label>
+                    <input type="text" class="form-control py-3"
+                        value="{{agendamento.pagamento.metodo_pagamento}}" disabled>
+                </div>
+                <div class="col-md-3">
+                    <label for="data" class="form-label f600">Status Pgto</label>
+                    <input type="text" class="form-control py-3"
+                        value="{{agendamento.pagamento.status}}" disabled>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

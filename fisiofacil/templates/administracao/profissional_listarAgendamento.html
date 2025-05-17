@@ -36,19 +36,34 @@
                                     <th scope="col">Paciente</th>
                                     <th scope="col">Especialidade</th>
                                     <th scope="col">Horário</th>
+                                    <th scope="col">Pagamento</th>
                                     <th scope="col">Status</th>
-
+                                    <th scope="col">Ação</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for agendamento in agendamentos %}
                                 <tr>
                                     <th scope="row">{{ agendamento.id }}</th>
-                                    
                                     <td>{{ agendamento.data }}</td>
                                     <td>{{ agendamento.cliente_info.nome }}</td>
                                     <td>{{ agendamento.profissional_servico_info.servico_nome  }}</td>
                                     <td>{{ agendamento.hora}}</td>
+                                    <td>
+                                        {% if agendamento.pagamento.status == 'agendado' %}
+                                            <span class="badge bg-warning text-dark">Agendado</span>
+                                        {% elif agendamento.pagamento.status == 'confirmado' %}
+                                            <span class="badge bg-success">Confirmado</span>
+                                        {% elif agendamento.pagamento.status == 'cancelado' or agendamento.pagamento.status == 'cancelado_pelo_cliente' %}
+                                            <span class="badge bg-secondary">Cancelado</span>
+                                        {% elif agendamento.pagamento.status == 'realizado' %}
+                                            <span class="badge bg-primary">Realizado</span>
+                                        {% elif agendamento.pagamento.status == 'nao_compareceu' %}
+                                            <span class="badge bg-secondary">Não Compareceu</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary text-white">{{agendamento.pagamento.status}}</span>
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         {% if agendamento.status == 'agendado' %}
                                             <span class="badge bg-warning text-dark">Agendado</span>
@@ -63,6 +78,11 @@
                                         {% else %}
                                             <span class="badge bg-secondary text-white">{{agendamento.status}}</span>
                                         {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="/adm/visualizar-agendamento/{{ agendamento.id }}/" class="btn btn-link">
+                                            <i class="bi bi-search"></i>
+                                        </a>
                                     </td>
                                 </tr>
                                 {% endfor %}
