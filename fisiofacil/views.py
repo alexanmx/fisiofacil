@@ -30,8 +30,6 @@ class ProfissionalViewSet(viewsets.ModelViewSet):
     serializer_class = ProfissionalSerializer
     permission_classes = [IsSuperUser]
 
-    
-
 class ServicoViewSet(viewsets.ModelViewSet):
     queryset = Servico.objects.all()
     serializer_class = ServicoSerializer

@@ -50,6 +50,8 @@ class Agendamento(models.Model):
     data = models.DateField()
     hora = models.TimeField()
     criado_em = models.DateTimeField(auto_now_add=True)
+    tratamento = models.TextField(null=True, blank=True)
+    status = models.TextField(null=True, blank=True)
 
     def __str__(self):
        return f"{self.cliente.nome} - {self.data} {self.hora} - {self.profissional_servico}"
@@ -62,3 +64,15 @@ class Prontuario(models.Model):
 
     def __str__(self):
         return f"Prontuário de {self.agendamento.cliente.nome} em {self.agendamento.data}"
+
+
+class Pagamento(models.Model):
+    agendamento = models.OneToOneField(Agendamento, on_delete=models.CASCADE)
+    valor_pago = models.DecimalField(max_digits=10, decimal_places=2)
+    data_pagamento = models.DateTimeField(auto_now_add=True)
+    forma_pagamento = models.CharField(max_length=50)
+    observacoes = models.TextField(null=True, blank=True)
+    status = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Pagamento de {self.agendamento.cliente.nome} - {self.valor_pago}"
