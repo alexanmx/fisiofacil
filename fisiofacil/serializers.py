@@ -127,6 +127,8 @@ class AgendamentoSerializer(serializers.ModelSerializer):
     data = serializers.DateField(format="%d/%m/%Y")
     hora = serializers.TimeField(format="%H:%M")
     taxa_formatada = serializers.SerializerMethodField()
+    tratamento = serializers.CharField(required=False, allow_blank=True)
+    status = serializers.CharField(required=False, allow_blank=True)
 
     def get_taxa_formatada(self, obj):
         # Formata o valor da taxa como moeda brasileira
@@ -156,6 +158,7 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
+        print('validated_data:', validated_data)
         # Obtemos o CPF do cliente que vem na requisição
         cpf = validated_data.pop('cpf')
 
@@ -171,7 +174,7 @@ class AgendamentoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Agendamento
-        fields = ['id', 'cliente', 'cpf', 'profissional_servico', 'data', 'hora', 'criado_em', 'taxa_formatada']
+        fields = ['id', 'cliente', 'cpf', 'profissional_servico', 'data', 'hora', 'criado_em', 'taxa_formatada', 'status', 'tratamento']
         read_only_fields = ['id', 'criado_em', 'cliente', 'profissional_servico', 'data', 'taxa_formatada'] # Tornar nested read-only
         write_only_fields = ['cpf']
 
