@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-jvj32td*rr7o@!0pi!=xuexd2h*pzylz49-d$j*^ahm5otdg*r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', False)
+DEBUG = os.getenv('DEBUG', True)
 
 # ALLOWED_HOSTS = ['fisiofacil.onrender.com']
 ALLOWED_HOSTS = ['*']

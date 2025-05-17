@@ -26,9 +26,13 @@ class Servico(models.Model):
 class ProfissionalServico(models.Model):
     profissional = models.ForeignKey(Profissional, on_delete=models.CASCADE)
     servico = models.ForeignKey(Servico, on_delete=models.CASCADE)
-    data_inicio = models.DateField()
-    data_fim = models.DateField(null=True, blank=True)
-    taxa = models.DecimalField(max_digits=10, decimal_places=2)
+    # campos removidos
+    
+    # Remova o campo taxa, pois ele deve ser derivado de Servico.valor
+    @property
+    def taxa(self):
+        return self.servico.valor
+    
     status = models.BooleanField(default=True)
 
     def __str__(self):
@@ -67,12 +71,11 @@ class Prontuario(models.Model):
 
 
 class Pagamento(models.Model):
-    agendamento = models.OneToOneField(Agendamento, on_delete=models.CASCADE)
-    valor_pago = models.DecimalField(max_digits=10, decimal_places=2)
-    data_pagamento = models.DateTimeField(auto_now_add=True)
-    forma_pagamento = models.CharField(max_length=50)
-    observacoes = models.TextField(null=True, blank=True)
-    status = models.TextField(null=True, blank=True)
+    agendamento = models.OneToOneField(Agendamento, on_delete=models.CASCADE, related_name='pagamento')
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    valor = models.DecimalField(max_digits=10, decimal_places=2)
+    metodo_pagamento = models.CharField(max_length=50, blank=True, null=True)
+    status = models.CharField(max_length=20, default='pendente')
 
     def __str__(self):
-        return f"Pagamento de {self.agendamento.cliente.nome} - {self.valor_pago}"
+        return f"Pagamento para Agendamento #{self.agendamento.id} - Status: {self.status}"

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'template/base.html' %}
 
 {% block titulo %}FisioFácil - Agendamentos{% endblock %}
 
@@ -33,12 +33,9 @@
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Data</th>
+                                    <th scope="col">Paciente</th>
+                                    <th scope="col">Especialidade</th>
                                     <th scope="col">Horário</th>
-                                    <th scope="col">Cliente</th>
-                                    <th scope="col">Tratamento</th>
-                                    <th scope="col">Serviço</th>
-                                    <th scope="col">Profissional</th>
-                                    <th scope="col">Valor</th>
                                     <th scope="col">Status</th>
 
                                 </tr>
@@ -49,16 +46,24 @@
                                     <th scope="row">{{ agendamento.id }}</th>
                                     
                                     <td>{{ agendamento.data }}</td>
-                                    <td>{{ agendamento.hora }}</td>
-                                    <td>{{ agendamento.cliente.nome }}</td>
-                                    
-                                    <td></td>
-                                    <td>{{ agendamento.profissional_servico.servico_nome  }}</td>
-                                    <td>{{ agendamento.profissional_servico.profissional_nome  }}</td>
-                                    <td>{{ agendamento.taxa_formatada  }}</td>
-                                    <td>sim/não</td>
-                                    <td>{{ agendamento.status }}</td>
-                                    <!-- <td>**DEBUG: {{ agendamento|pprint }}**</td> -->
+                                    <td>{{ agendamento.cliente_info.nome }}</td>
+                                    <td>{{ agendamento.profissional_servico_info.servico_nome  }}</td>
+                                    <td>{{ agendamento.hora}}</td>
+                                    <td>
+                                        {% if agendamento.status == 'agendado' %}
+                                            <span class="badge bg-warning text-dark">Agendado</span>
+                                        {% elif agendamento.status == 'confirmado' %}
+                                            <span class="badge bg-success">Confirmado</span>
+                                        {% elif agendamento.status == 'cancelado' or agendamento.status == 'cancelado_pelo_cliente' %}
+                                            <span class="badge bg-secondary">Cancelado</span>
+                                        {% elif agendamento.status == 'realizado' %}
+                                            <span class="badge bg-primary">Realizado</span>
+                                        {% elif agendamento.status == 'nao_compareceu' %}
+                                            <span class="badge bg-secondary">Não Compareceu</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary text-white">{{agendamento.status}}</span>
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

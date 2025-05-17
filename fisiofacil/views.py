@@ -66,53 +66,35 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
         return [IsProfissionalOrAdmin()]  # Outras ações precisam de login
 
     def create(self, request, *args, **kwargs):
-        # Se for cliente (sem autenticação), usa o fluxo de CPF
-        if not request.user.is_authenticated:
-            cpf = request.data.get('cpf')
-            data_agendamento = request.data.get('data')
-            hora_agendamento = request.data.get('hora')
+            # Se for cliente (sem autenticação), usa o fluxo do serializer
+            if not request.user.is_authenticated:
+                serializer = self.get_serializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-            if not cpf or not data_agendamento or not hora_agendamento:
-                return Response({"detail": "CPF, data e hora são necessários."}, status=status.HTTP_400_BAD_REQUEST)
-
-            try:
-                cliente = Cliente.objects.get(cpf=cpf)
-            except Cliente.DoesNotExist:
-                return Response({"detail": "Cliente não encontrado."}, status=status.HTTP_404_NOT_FOUND)
-
-            if Agendamento.objects.filter(cliente=cliente, data=data_agendamento, hora=hora_agendamento).exists():
-                return Response({"detail": "Já existe um agendamento para essa data e hora."}, status=status.HTTP_400_BAD_REQUEST)
-
-            profissional_servico_id = request.data.get('profissional_servico')
-            try:
-                profissional_servico = ProfissionalServico.objects.get(id=profissional_servico_id)
-            except ProfissionalServico.DoesNotExist:
-                return Response({"detail": "Profissional e serviço não encontrados."}, status=status.HTTP_404_NOT_FOUND)
-
-            agendamento = Agendamento(cliente=cliente, profissional_servico=profissional_servico, data=data_agendamento, hora=hora_agendamento)
-            agendamento.save()
-
-            return Response({"detail": "Agendamento criado com sucesso!"}, status=status.HTTP_201_CREATED)
-        
-        # Se for profissional logado, usa o comportamento normal
-        return super().create(request, *args, **kwargs)
+            # Se for profissional logado, usa o comportamento normal do ModelViewSet
+            return super().create(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             cpf = request.query_params.get('cpf')
-
             if not cpf:
                 return Response({"detail": "CPF é necessário para consulta."}, status=status.HTTP_400_BAD_REQUEST)
-
             try:
                 cliente = Cliente.objects.get(cpf=cpf)
             except Cliente.DoesNotExist:
                 return Response({"detail": "Cliente não encontrado."}, status=status.HTTP_404_NOT_FOUND)
-
             queryset = Agendamento.objects.filter(cliente=cliente)
-        else:
-            # Profissional logado ou admin pode ver todos
+        elif request.user.is_superuser:
             queryset = self.queryset
+        else:
+            # Profissional logado: filtra agendamentos do profissional
+            try:
+                profissional = Profissional.objects.get(usuario=request.user)
+            except Profissional.DoesNotExist:
+                return Response({"detail": "Profissional não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+            queryset = Agendamento.objects.filter(profissional_servico__profissional=profissional)
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -134,12 +116,7 @@ class ProntuarioViewSet(viewsets.ModelViewSet):
 class DeletarAgendamentoView(APIView):
     def delete(self, request):
         cpf = request.data.get("cpf")
-        data_str = request.data.get("data")
-
-        try:
-            data_agendamento = datetime.strptime(data_str, "%Y-%m-%d").date()
-        except ValueError:
-            return Response({"detail": "Formato de data inválido. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+        idAgendamento = request.data.get("agendamento_id")
 
         # Busca o cliente pelo CPF
         try:
@@ -149,16 +126,16 @@ class DeletarAgendamentoView(APIView):
 
         # Busca o agendamento com esse cliente e data
         try:
-            agendamento = Agendamento.objects.get(cliente=cliente, data=data_agendamento)
+            agendamento = Agendamento.objects.get(cliente=cliente, id=idAgendamento, status='agendado')
         except Agendamento.DoesNotExist:
-            return Response({"detail": "Agendamento não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "Agendamento não permite cancelamento."}, status=status.HTTP_404_NOT_FOUND)
 
         # Verifica se está no prazo permitido para deletar
-        hoje = datetime.now().date()
-        if data_agendamento <= hoje + timedelta(days=1):
-            return Response({"detail": "Cancelamento só é permitido com mais de 1 dia de antecedência."}, status=status.HTTP_403_FORBIDDEN)
-
-        agendamento.delete()
+        # hoje = datetime.now().date()
+        # if data_agendamento <= hoje + timedelta(days=1):
+        #     return Response({"detail": "Cancelamento só é permitido com mais de 1 dia de antecedência."}, status=status.HTTP_403_FORBIDDEN)
+        agendamento.status = 'cancelado_pelo_cliente'
+        agendamento.save()
         return Response({"detail": "Agendamento cancelado com sucesso."}, status=status.HTTP_204_NO_CONTENT)    
 
 
@@ -168,30 +145,30 @@ def index(request):
     response = requests.get(api_url)
     servicos_ativos = response.json() if response.status_code == 200 else []
     user = request.user if request.user.is_authenticated else None  # Obtém o usuário do Django, se autenticado
-    return render(request, 'index.html', {'servicos_ativos': servicos_ativos, 'user': user})
+    return render(request, 'public/index.html', {'servicos_ativos': servicos_ativos, 'user': user})
 
 def profissionais(request):
     api_url = f'{settings.API_BASE_URL}/api/profissionais/'
     response = requests.get(api_url)
     profissionais = response.json() if response.status_code == 200 else []
-    return render(request, 'profissionais.html', {'profissionais': profissionais})
+    return render(request, 'public/profissionais.html', {'profissionais': profissionais})
 
 def servicos(request):
     api_url = f'{settings.API_BASE_URL}/api/profissional-servicos-ativos/'
     response = requests.get(api_url)
     servicos_ativos = response.json() if response.status_code == 200 else []
-    return render(request, 'servicos.html', {'servicos_ativos': servicos_ativos})
+    return render(request, 'public/servicos.html', {'servicos_ativos': servicos_ativos})
 
 def agendamentos(request):
     profissional_servicos = ProfissionalServico.objects.filter(status=True)
-    return render(request, 'agendamentos.html', {'profissional_servicos': profissional_servicos})
+    return render(request, 'public/agendamentos.html', {'profissional_servicos': profissional_servicos})
 
 def contato(request):
-    return render(request, 'contato.html')
+    return render(request, 'public/contato.html')
 
 def agendar(request):
     profissional_servicos = ProfissionalServico.objects.filter(status=True)
-    return render(request, 'agendar.html', {'profissional_servicos': profissional_servicos})
+    return render(request, 'public/agendar.html', {'profissional_servicos': profissional_servicos})
 
 def obter_token_jwt(username, password):
     """Obtém o token JWT da API externa."""
@@ -229,7 +206,7 @@ def login_view(request):
             return JsonResponse({'status': 'error', 'message': 'Usuário ou senha inválidos.'}, status=400)
     else:
         # Se não for POST, apenas renderiza o formulário de login
-        return render(request, 'login.html')
+        return render(request, 'public/login.html')
 
 def logout_view(request):
     logout(request)  # Limpa a sessão do Django (opcional, mas bom manter)
@@ -237,74 +214,76 @@ def logout_view(request):
     return redirect('index')  # Redireciona para a página inicial   
 
 def cadastrar(request):
-    return render(request, 'cadastrar.html')
+    return render(request, 'public/cadastrar.html')
 
 def meusAgendamentos(request):
     cpf = request.GET.get('cpf')
     api_url = f'{settings.API_BASE_URL}/api/agendamentos/?cpf={cpf}'
     response = requests.get(api_url)
     agendamentos = response.json() if response.status_code == 200 else []
-    return render(request, 'meus_agendamentos.html', {'agendamentos': agendamentos})
+    return render(request, 'public/meus_agendamentos.html', {'agendamentos': agendamentos})
 
 
 # views administrativas
 def indexAdm(request):
     if 'jwt_token' in request.session:
-        return render(request, 'profissional_index.html')
+        return render(request, 'administracao/profissional_index.html')
     else:
-        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
 
 from django.contrib.auth.decorators import login_required
 
 @login_required
 def cadastrarUsuarioAdm(request):
     if not request.user.is_superuser:
-        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
     if 'jwt_token' in request.session:
-        return render(request, 'profissional_cadastrarUsuario.html', {'jwt_token': request.session['jwt_token']})
+        return render(request, 'administracao/profissional_cadastrarUsuario.html', {'jwt_token': request.session['jwt_token']})
     else:
-        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
 
 @login_required
 def listarUsuarioAdm(request):
     if not request.user.is_superuser:
-        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
     if 'jwt_token' in request.session:
         jwt_token = request.session['jwt_token']
         api_url = f'{settings.API_BASE_URL}/api/profissionais/'
         headers = {'Authorization': f'Bearer {jwt_token}'}
         response = requests.get(api_url, headers=headers)
         usuarios = response.json() if response.status_code == 200 else []
-        return render(request, 'profissional_listarUsuario.html', {'usuarios': usuarios})
+        return render(request, 'administracao/profissional_listarUsuario.html', {'usuarios': usuarios})
     else:
-        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
 
 def editarUsuarioAdm(request, usuario_id):
+    if not request.user.is_superuser:
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
     if 'jwt_token' in request.session:
         api_url = f'{settings.API_BASE_URL}/api/profissionais/{usuario_id}/'
         response = requests.get(api_url)
         if response.status_code == 200:
             usuario = response.json()
-            return render(request, 'profissional_editarUsuario.html', {'usuario': usuario})
+            return render(request, 'administracao/profissional_editarUsuario.html', {'usuario': usuario})
         else:
             return HttpResponse("Usuário não encontrado", status=404)
     else:
-        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
 
 def cadastrarServicoAdm(request):
     if 'jwt_token' in request.session:
-        return render(request, 'profissional_cadastrarServico.html')
+        return render(request, 'administracao/profissional_cadastrarServico.html')
     else:
-        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
     
 def listarServicoAdm(request):
     if 'jwt_token' in request.session:
         api_url = f'{settings.API_BASE_URL}/api/servicos/'
         response = requests.get(api_url)
         servicos = response.json() if response.status_code == 200 else []
-        return render(request, 'profissional_listarServico.html', {'servicos': servicos})
+        return render(request, 'administracao/profissional_listarServico.html', {'servicos': servicos})
     else:
-        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
     
 def editarServicoAdm(request, servico_id):
     if 'jwt_token' in request.session:
@@ -312,13 +291,15 @@ def editarServicoAdm(request, servico_id):
         response = requests.get(api_url)
         if response.status_code == 200:
             servico = response.json()
-            return render(request, 'profissional_editarServico.html', {'servico': servico})
+            return render(request, 'administracao/profissional_editarServico.html', {'servico': servico})
         else:
             return HttpResponse("Serviço não encontrado", status=404)
     else:
-        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
 
 def atribuirProfissionalAdm(request):
+    if not request.user.is_superuser:
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
     if 'jwt_token' in request.session:
         api_url = f'{settings.API_BASE_URL}/api/servicos/'
         response = requests.get(api_url)
@@ -326,28 +307,32 @@ def atribuirProfissionalAdm(request):
 
         # lista profissionais
         api_url = f'{settings.API_BASE_URL}/api/profissionais/'
-        response = requests.get(api_url)
+        jwt_token = request.session['jwt_token']
+        headers = {'Authorization': f'Bearer {jwt_token}'}
+        response = requests.get(api_url, headers=headers)
         profissionais = response.json() if response.status_code == 200 else []
 
-        return render(request, 'profissional_atribuirProfissional.html', {'servicos': servicos, 'profissionais': profissionais})
+        return render(request, 'administracao/profissional_atribuirProfissional.html', {'servicos': servicos, 'profissionais': profissionais})
     else:
-        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
 
 def servicosProfissionalAdm(request):
+    if not request.user.is_superuser:
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
     if 'jwt_token' in request.session:
         api_url = f'{settings.API_BASE_URL}/api/profissional-servicos-ativos/'
         response = requests.get(api_url)
         servicos = response.json() if response.status_code == 200 else []
-        return render(request, 'profissional_listarServicosProfissionais.html', {'servicos': servicos})
+        return render(request, 'administracao/profissional_listarServicosProfissionais.html', {'servicos': servicos})
     else:
-        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
 
 def cadastrarAgendamentoAdm(request):
     if 'jwt_token' in request.session:
         profissional_servicos = ProfissionalServico.objects.filter(status=True)
-        return render(request, 'profissional_cadastrarAgendamento.html', {'profissional_servicos': profissional_servicos})
+        return render(request, 'administracao/profissional_cadastrarAgendamento.html', {'profissional_servicos': profissional_servicos})
     else:
-        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
 
 def listarAgendamentoAdm(request):
     if 'jwt_token' in request.session:
@@ -356,19 +341,19 @@ def listarAgendamentoAdm(request):
         api_url = f'{settings.API_BASE_URL}/api/agendamentos/'
         response = requests.get(api_url, headers=headers)
         agendamentos = response.json() if response.status_code == 200 else []
-        return render(request, 'profissional_listarAgendamento.html', {'agendamentos': agendamentos})   
+        return render(request, 'administracao/profissional_listarAgendamento.html', {'agendamentos': agendamentos})   
 
 def cadastrarClienteAdm(request):
     if 'jwt_token' in request.session:
-        return render(request, 'profissional_cadastrarCliente.html')
+        return render(request, 'administracao/profissional_cadastrarCliente.html')
     else:
-        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
 
 def listarClienteAdm(request):
     if 'jwt_token' in request.session:
         api_url = f'{settings.API_BASE_URL}/api/clientes/'
         response = requests.get(api_url)
         clientes = response.json() if response.status_code == 200 else []
-        return render(request, 'profissional_listarCliente.html', {'clientes': clientes})
+        return render(request, 'administracao/profissional_listarCliente.html', {'clientes': clientes})
     else:
-        return render(request, 'profissional_index.html', {'error': 'Acesso não autorizado'})
+        return render(request, 'administracao/profissional_index.html', {'error': 'Acesso não autorizado'})
