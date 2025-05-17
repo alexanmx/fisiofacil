@@ -1,6 +1,7 @@
 from django.test import SimpleTestCase
 from unittest.mock import patch, MagicMock
 
+# Teste mock para cadastrar um cliente
 class ClienteModelMockTest(SimpleTestCase):
     @patch('fisiofacil.models.Cliente')
     def test_criar_cliente_mock(self, MockCliente):
@@ -27,7 +28,7 @@ class ClienteModelMockTest(SimpleTestCase):
 
 
 
-
+# Teste mock para cadastrar um profissional
 class ProfissionalModelMockTest(SimpleTestCase):
     @patch('fisiofacil.models.Profissional')
     def test_criar_profissional_mock(self, MockProfissional):
@@ -54,3 +55,33 @@ class ProfissionalModelMockTest(SimpleTestCase):
         self.assertEqual(profissional.cpf, '98765432100')
         self.assertEqual(profissional.especialidade, 'Fisioterapia')
         self.assertEqual(str(profissional), 'Maria Souza')
+
+
+
+# Teste mock para cadastrar um agendamento
+class AgendamentoModelMockTest(SimpleTestCase):
+    @patch('fisiofacil.models.Agendamento')
+    def test_criar_agendamento_mock(self, MockAgendamento):
+        mock_agendamento = MagicMock()
+        mock_agendamento.id = 1
+        mock_agendamento.data = '2024-06-01'
+        mock_agendamento.hora = '10:00'
+        mock_agendamento.cliente_id = 1
+        mock_agendamento.profissional_id = 2
+        mock_agendamento.status = 'Confirmado'
+        mock_agendamento.__str__.return_value = 'Agendamento 1'
+        MockAgendamento.objects.create.return_value = mock_agendamento
+
+        agendamento = MockAgendamento.objects.create(
+            data='2024-06-01',
+            hora='10:00',
+            cliente_id=1,
+            profissional_id=2,
+            status='Confirmado'
+        )
+        self.assertEqual(agendamento.data, '2024-06-01')
+        self.assertEqual(agendamento.hora, '10:00')
+        self.assertEqual(agendamento.cliente_id, 1)
+        self.assertEqual(agendamento.profissional_id, 2)
+        self.assertEqual(agendamento.status, 'Confirmado')
+        self.assertEqual(str(agendamento), 'Agendamento 1')
