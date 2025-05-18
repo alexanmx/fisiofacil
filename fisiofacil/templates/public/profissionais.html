@@ -8,12 +8,12 @@
     <p class="second-text-color">Conheça nossa equipe de profissionais.</p>
 
     <div class="row row-cols-1 row-cols-lg-3 row-cols-md-2 g-2 my-5">
-        {% for profissional in profissional %}
+        {% for profissional in profissionais %}
         <div class="col">
             <div class="card h-100">
                 <div class="card-body">
                     <h5 class="card-title text-color f700"><i class="bi bi-chevron-right text-info"></i>{{ profissional.nome }}</h5>
-                    <p class="f600 second-text-color">{{ profissional.nome }}</p>
+                    <p class="f600 second-text-color">Especialidade: {{ profissional.especialidade }}</p>
                 </div>
             </div>
         </div>

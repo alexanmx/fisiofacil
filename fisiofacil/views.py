@@ -29,7 +29,6 @@ import os
 class ProfissionalViewSet(viewsets.ModelViewSet):
     queryset = Profissional.objects.select_related('usuario').all()
     serializer_class = ProfissionalSerializer
-    permission_classes = [IsSuperUser]
     filter_backends = [filters.SearchFilter]
     search_fields = ['id', 'nome', 'usuario__email', 'telefone','especialidade', 'usuario__username']  # campos textuais para pesquisar
 
