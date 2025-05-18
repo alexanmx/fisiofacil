@@ -1,4 +1,4 @@
-from rest_framework import viewsets, pagination, status
+from rest_framework import viewsets, pagination, status, filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from datetime import datetime, timedelta
@@ -22,17 +22,21 @@ from django.urls import reverse
 from django.contrib.auth import logout
 from .permissions import IsSuperUser
 
+
 import os
 
 
 class ProfissionalViewSet(viewsets.ModelViewSet):
     queryset = Profissional.objects.select_related('usuario').all()
     serializer_class = ProfissionalSerializer
-    # permission_classes = [IsSuperUser]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['id', 'nome', 'usuario__email', 'telefone','especialidade', 'usuario__username']  # campos textuais para pesquisar
 
 class ServicoViewSet(viewsets.ModelViewSet):
     queryset = Servico.objects.all()
     serializer_class = ServicoSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['nome','descricao', 'valor'] # campos textuais para pesquisar    
 
 class ProfissionalServicoViewSet(viewsets.ModelViewSet):
     queryset = ProfissionalServico.objects.all()
@@ -59,6 +63,9 @@ class ProfissionalServicoAtivoViewSet(viewsets.ReadOnlyModelViewSet):
 class AgendamentoViewSet(viewsets.ModelViewSet):
     queryset = Agendamento.objects.all()
     serializer_class = AgendamentoSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['data','cliente_info','pagamento','status'] # campos textuais para pesquisar    
+
 
     def get_permissions(self):
         if self.action in ['create', 'list']:
@@ -75,6 +82,17 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
 
             # Se for profissional logado, usa o comportamento normal do ModelViewSet
             return super().create(request, *args, **kwargs)
+    
+    def partial_update(self, request, *args, **kwargs):
+        agendamento = self.get_object()  # instancia existente de Agendamento
+        # Se estiver tentando atualizar o campo 'tratamento'
+        if 'tratamento' in request.data:
+            # Verifica se o usuário autenticado é o profissional responsável
+            if request.user != agendamento.profissional_servico.profissional.usuario:
+                # Negar acesso se não for o profissional vinculado
+                raise PermissionDenied("Você não tem permissão para atualizar o campo 'tratamento' deste agendamento.")
+        # Chama o comportamento padrão do DRF para PATCH (200 OK se der certo)
+        return super().partial_update(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -107,6 +125,9 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
 class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['id', 'nome', 'email', 'telefone', 'cpf', 'data_nascimento'] # campos textuais para pesquisar    
+
 
 class ProntuarioViewSet(viewsets.ModelViewSet):
     queryset = Prontuario.objects.all()

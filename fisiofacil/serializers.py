@@ -44,7 +44,7 @@ class ProfissionalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profissional
         fields = ['id', 'nome', 'email', 'telefone',
-                  'cpf', 'data_nascimento', 'especialidade', 'usuario']
+                  'cpf', 'data_nascimento', 'especialidade', 'usuario','ativo']
 
     def create(self, validated_data):
         # retira os dados de usuário para criar primeiro o User
@@ -135,8 +135,15 @@ class AgendamentoSerializer(serializers.ModelSerializer):
     cpf = serializers.CharField(write_only=True)
 
     def validate(self, data):
+        # --- INÍCIO: se for PATCH/PUT (atualização), pula toda a validação abaixo ---
+        if self.instance:
+            return data
+        # --- FIM: validações apenas para criação (POST) ---
+        
+         # Criação exige profissional_servico
         if 'profissional_servico' not in data:
-            raise ValidationError("O campo profissional_servico é obrigatório.")
+            raise ValidationError({"profissional_servico": "Este campo é obrigatório na criação."})
+
 
         profissional_servico_id = data['profissional_servico']
         if isinstance(profissional_servico_id, str) and profissional_servico_id.isdigit():
