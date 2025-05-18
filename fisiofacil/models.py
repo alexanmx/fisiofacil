@@ -10,6 +10,8 @@ class Profissional(models.Model):
     cpf = models.CharField(max_length=14, unique=True)
     data_nascimento = models.DateField()
     especialidade = models.CharField(max_length=100)
+    ativo = models.BooleanField(default=True)
+
 
     def __str__(self):
         return self.nome
@@ -56,6 +58,8 @@ class Agendamento(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
     tratamento = models.TextField(null=True, blank=True)
     status = models.TextField(null=True, blank=True)
+    tratamento = models.TextField(blank=True, null=True)
+
 
     def __str__(self):
        return f"{self.cliente.nome} - {self.data} {self.hora} - {self.profissional_servico}"
