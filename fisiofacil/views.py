@@ -28,7 +28,7 @@ import os
 class ProfissionalViewSet(viewsets.ModelViewSet):
     queryset = Profissional.objects.select_related('usuario').all()
     serializer_class = ProfissionalSerializer
-    permission_classes = [IsSuperUser]
+    # permission_classes = [IsSuperUser]
 
 class ServicoViewSet(viewsets.ModelViewSet):
     queryset = Servico.objects.all()
