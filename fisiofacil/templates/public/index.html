@@ -22,15 +22,15 @@
     </div>
 </div>
 
-<div class="px-4 text-center my-5" role="region" aria-labelledby="destaque-servicos">
+<div class="px-4 text-center my-5 container" role="region" aria-labelledby="destaque-servicos">
     <h2 class="display-7 fw-bold text-color">Serviços em Destaque</h2>
-    <div class="row row-cols-1 row-cols-md-3 g-2 d-flex justify-content-center">
+    <div class="row row-cols-1 row-cols-md-3 g-2 d-flex justify-content-center mt-5">
         {% for servico in servicos_ativos.results %}
         <div class="col">
             <div class="card h-100 text-center border-0">
                 <div class="card-body">
-                    <h5 class="card-title text-color mb-5">{{ servico.servico_nome }}</h5>
-                    <a href="/agendar/" class="btn btn-success rounded-pill px-4 f700">Agendar</a>
+                    <h4 class="card-title text-color mb-5 f700">{{ servico.servico_nome }}</h4>
+                    <a href="/agendar/?service={{servico.id}}" class="btn btn-success rounded-pill px-4 f700">Agendar</a>
                 </div>
             </div>
         </div>

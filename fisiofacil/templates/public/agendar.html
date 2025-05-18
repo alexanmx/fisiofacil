@@ -158,5 +158,17 @@
             form.classList.add('was-validated');
         }, false);
     })();
+
+    // Seleciona o serviço se existir o parâmetro 's' na URL
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const s = urlParams.get('service');
+        if (s) {
+            const select = document.getElementById('profissional_servico');
+            if (select) {
+                select.value = s;
+            }
+        }
+    });
 </script>
 {% endblock %}
