@@ -166,7 +166,7 @@ LOGIN_URL = '/login/'
 from datetime import timedelta
 SIMPLE_JWT = {
     # 'JWT_VERIFY_EXPIRATION': False,  # desabilita a verificação de expiração
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=99999),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'BLACKLIST_AFTER_ROTATION': False,
     'SIGNING_KEY': os.environ.get('SECRET_KEY_JWT', 'INSECURE'),
