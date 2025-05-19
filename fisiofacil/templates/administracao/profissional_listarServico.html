@@ -14,7 +14,7 @@
                 <div class="row row-cols-lg-auto g-3 align-items-center">
                     
                     <div class="col-8" style="position: relative;">
-                        <input type="text" class="form-control border border-secondary" placeholder="Buscar" style="padding-right: 2.5rem;">
+                        <input type="text" name="search" class="form-control border border-secondary" placeholder="Buscar" style="padding-right: 2.5rem;">
                         <i class="bi bi-search" style="position: absolute; right: 0.90rem; top: 50%; transform: translateY(-50%);"></i>
                       </div>
                     <div class="col-4">
@@ -48,7 +48,7 @@
                                     <th scope="row">{{ servico.id }}</th>
                                     <td>{{ servico.nome }}</td>
                                     <td>{{ servico.descricao }}</td>
-                                    <td>{{ servico.valor }}</td>
+                                    <td>{{ servico.valor_formatado }}</td>
                                     <td></td>
                                     <td></td>
                                     <td>

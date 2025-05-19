@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.utils.formats import localize
 
 class ClienteSerializer(serializers.ModelSerializer):
+    data_nascimento = serializers.DateField(format="%d/%m/%Y")
+
     class Meta:
         model = Cliente
         fields = ['id', 'nome', 'email', 'telefone', 'cpf', 'data_nascimento']
@@ -110,10 +112,18 @@ class ProfissionalServicoBasicoSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'profissional_nome', 'servico_nome', 'servico_valor', 'taxa']
 
 class PagamentoSerializer(serializers.ModelSerializer):
+    taxa_formatada = serializers.SerializerMethodField()
+
+    def get_taxa_formatada(self, obj):
+        # Formata o valor da taxa como moeda brasileira
+        return f"R$ {localize(obj.valor)}"
+    
     class Meta:
         model = Pagamento
-        fields = '__all__'
-        read_only_fields = ['id', 'data_criacao', 'agendamento'] # 'agendamento' será definido no create
+        # fields = '__all__'
+        # read_only_fields = ['id', 'data_criacao', 'agendamento']
+        fields = ['id', 'metodo_pagamento', 'status', 'taxa_formatada', 'agendamento']
+        read_only_fields = ['id', 'taxa_formatada', 'agendamento']
 
 class AgendamentoSerializer(serializers.ModelSerializer):
     profissional_servico_info = ProfissionalServicoBasicoSerializer(read_only=True, source='profissional_servico')

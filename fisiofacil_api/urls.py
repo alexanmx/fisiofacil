@@ -21,6 +21,7 @@ router.register(r'pagamentos', views.PagamentoViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/agendamentos/delete/", DeletarAgendamentoView.as_view(), name="agendamento-delete"),  # Mova para cá
+    path('api/tratamentos-por-cpf/', views.TratamentosPorCPFView.as_view(), name='tratamentos_por_cpf'),
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # rota de login
