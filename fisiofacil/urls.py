@@ -14,9 +14,11 @@ urlpatterns = [
     path('meus-agendamentos/?cpf=<str:cpf>', views.meusAgendamentos, name='meusAgendamentos'),
     
     path('adm/', views.indexAdm, name='indexAdm'),
+    
     path('adm/cadastrar-usuario/', views.cadastrarUsuarioAdm, name='cadastrarUsuarioAdm'),
     path('adm/listar-usuario/', views.listarUsuarioAdm, name='listarUsuarioAdm'),
     path('adm/editar-usuario/<int:usuario_id>', views.editarUsuarioAdm, name='editarUsuarioAdm'),
+    
     path('adm/cadastrar-servico/', views.cadastrarServicoAdm, name='cadastrarServicoAdm'),
     path('adm/listar-servico/', views.listarServicoAdm, name='listarServicoAdm'),
     path('adm/editar-servico/<int:servico_id>/', views.editarServicoAdm, name='editarServicoAdm'),
@@ -32,4 +34,5 @@ urlpatterns = [
 
     path('adm/listar-pagamentos/', views.listarPagamentoAdm, name='listarPagamentoAdm'),
 
+    path('adm/ver-prontuario', views.verProntuarioAdm, name='ver_prontuario'),
 ]

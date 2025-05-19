@@ -1,0 +1,73 @@
+{% extends 'template/base.html' %}
+
+{% block titulo %}Consultar Tratamentos por CPF{% endblock %}
+
+{% block conteudo %}
+<div class="container my-5">
+    <h1>Prontuário de Paciente</h1>
+    <h2 class="mb-4">Consultar Tratamentos</h2>
+    <form id="formCpf" class="row g-3 mb-4">
+        <div class="col-auto">
+            <input type="text" class="form-control" id="cpf" name="cpf" placeholder="Digite o CPF do cliente" required>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </form>
+
+    <div id="resultadoTratamentos"></div>
+</div>
+
+<script>
+document.getElementById('formCpf').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const cpf = document.getElementById('cpf').value;
+    const resultadoDiv = document.getElementById('resultadoTratamentos');
+    resultadoDiv.innerHTML = '<div class="text-secondary">Buscando...</div>';
+
+    fetch(`/api/tratamentos-por-cpf/?cpf=${encodeURIComponent(cpf)}`, {
+        headers: {
+            'Authorization': 'Bearer {{ jwt_token|default:"" }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.detail) {
+            resultadoDiv.innerHTML = `<div class="alert alert-warning">${data.detail}</div>`;
+            return;
+        }
+        if (data.length === 0) {
+            resultadoDiv.innerHTML = '<div class="alert alert-info">Nenhum tratamento encontrado para este CPF.</div>';
+            return;
+        }
+        let html = `
+            <table class="table table-bordered mt-4">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Hora</th>
+                        <th>Status</th>
+                        <th>Tratamento</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        data.forEach(item => {
+            html += `
+                <tr>
+                    <td>${item.data}</td>
+                    <td>${item.hora}</td>
+                    <td>${item.status}</td>
+                    <td>${item.tratamento}</td>
+                </tr>
+            `;
+        });
+        html += '</tbody></table>';
+        resultadoDiv.innerHTML = html;
+    })
+    .catch(() => {
+        resultadoDiv.innerHTML = '<div class="alert alert-danger">Erro ao buscar tratamentos.</div>';
+    });
+});
+</script>
+{% endblock %}

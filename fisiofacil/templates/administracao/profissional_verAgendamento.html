@@ -10,8 +10,7 @@
 <div class="container-lg my-5">
     <div class="row">
         <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
-            <form id="agendamento-form" class="row g-3 needs-validation" novalidate>
-
+            <form id="tratamentoForm" class="row g-3 needs-validation" novalidate data-id="{{ agendamento.id }}">
                 <div class="col-md-3">
                     <label for="data" class="form-label f600">Data</label>
                     <input type="text" class="form-control py-3" value="{{agendamento.data}}" disabled>
@@ -29,58 +28,297 @@
                     <hr>
                 </div>
 
-                <div class="col-12">
+                <div class="col-md-6">
                     <label for="profissional_servico" class="form-label f600">Serviço</label>
                     <input type="text" class="form-control py-3"
                         value="{{agendamento.profissional_servico_info.servico_nome}}" disabled>
                 </div>
-                <div class="col-12">
+                <div class="col-md-6">
                     <label for="profissional_servico" class="form-label f600">Profissional</label>
                     <input type="text" class="form-control py-3"
                         value="{{agendamento.profissional_servico_info.profissional_nome}}" disabled>
                 </div>
 
                 <div class="col-12">
+                    <div class="mt-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="openTratamento">
+                        <label class="form-check-label" for="openTratamento">Lançar Tratamento</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label for="tratamento" class="form-label f600">Tratamento</label>
+                    <textarea class="form-control py-3" name="tratamento" id="tratamento" disabled>{{agendamento.tratamento}}
+                    </textarea>
+                </div>
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-primary" id="salvarTratamento" disabled>Salvar
+                        Tratamento</button>
+                </div>
+                <div class="col-12">
                     <hr>
                 </div>
 
                 <div class="col-12">
-                    <label for="profissional_servico" class="form-label f600">Cliente</label>
-                    <input type="text" class="form-control py-3"
-                        value="{{agendamento.cliente_info.nome}}" disabled>
+                    <label for="profissional_servico" class="form-label f600">Paciente</label>
+                    <input type="text" class="form-control py-3" value="{{agendamento.cliente_info.nome}}" disabled>
                 </div>
                 <div class="col-8">
                     <label for="profissional_servico" class="form-label f600">E-mail</label>
-                    <input type="text" class="form-control py-3"
-                        value="{{agendamento.cliente_info.email}}" disabled>
+                    <input type="text" class="form-control py-3" value="{{agendamento.cliente_info.email}}" disabled>
                 </div>
                 <div class="col-4">
                     <label for="profissional_servico" class="form-label f600">Telefone</label>
-                    <input type="text" class="form-control py-3"
-                        value="{{agendamento.cliente_info.telefone}}" disabled>
+                    <input type="text" class="form-control py-3" value="{{agendamento.cliente_info.telefone}}" disabled>
                 </div>
 
                 <div class="col-12">
                     <hr>
                 </div>
+            </form>
 
+            <form id="pagamentoForm" class="row g-3 needs-validation" novalidate
+                data-id="{{ agendamento.pagamento.id }}">
+                {% if agendamento.pagamento.status == 'pendente' %}
+                <div class="col-12">
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="openPgto">
+                        <label class="form-check-label" for="openPgto">Editar Pagamento</label>
+                    </div>
+                </div>
+                {% endif %}
                 <div class="col-md-3">
-                    <label for="data" class="form-label f600">Valor</label>
-                    <input type="text" class="form-control py-3"
-                        value="{{agendamento.pagamento.valor}}" disabled>
+                    <label for="valorPagamento" class="form-label f600">Valor</label>
+                    <input type="text" name="valor" id="valorPagamento" class="form-control py-3"
+                        value="{{agendamento.pagamento.taxa_formatada}}" disabled>
                 </div>
                 <div class="col-md-6">
-                    <label for="data" class="form-label f600">Forma de Pagamento</label>
-                    <input type="text" class="form-control py-3"
+                    <label for="formaPagamento" class="form-label f600">Forma de Pagamento</label>
+                    <input type="text" class="form-control py-3" name="metodo_pagamento" id="formaPagamento"
                         value="{{agendamento.pagamento.metodo_pagamento}}" disabled>
                 </div>
+
                 <div class="col-md-3">
-                    <label for="data" class="form-label f600">Status Pgto</label>
-                    <input type="text" class="form-control py-3"
+                    <label for="statusPagamento" class="form-label f600">Status Pgto</label>
+                    <input type="text" class="form-control py-3" name="status" id="statusPagamento"
                         value="{{agendamento.pagamento.status}}" disabled>
                 </div>
+                {% if agendamento.pagamento.status == 'pendente' %}
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-primary" id="salvarPagamento" disabled>Salvar
+                        Pagamento</button>
+                </div>
+                {% endif %}
             </form>
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="erroModal" tabindex="-1" aria-labelledby="erroModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="erroModalLabel">Erro!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="erroModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sucessoModal" tabindex="-1" aria-labelledby="sucessoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="sucessoModalLabel">Sucesso!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="sucessoModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if agendamento.pagamento.status == 'pendente' %}
+<script>
+    document.getElementById('openPgto').addEventListener('change', function () {
+        const isEditable = this.checked;
+        document.getElementById('formaPagamento').disabled = !isEditable;
+        document.getElementById('statusPagamento').disabled = !isEditable;
+        document.getElementById('salvarPagamento').disabled = !isEditable;
+    });
+</script>
+<script>
+    (() => {
+        'use strict'
+
+        const formEditarPgto = document.getElementById('pagamentoForm');
+        const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
+        const erroModalBody = document.getElementById('erroModalBody');
+        const sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
+        const sucessoModalBody = document.getElementById('sucessoModalBody');
+
+        // moeda
+        const inputVALOR = document.getElementById("valorPagamento");
+        inputVALOR.addEventListener("keyup", formatarMoeda);
+        function formatarMoeda(e) {
+            var v = e.target.value.replace(/\D/g, "");
+            v = (v / 100).toFixed(2) + "";
+            v = v.replace(".", ",");
+            v = v.replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,");
+            v = v.replace(/(\d)(\d{3}),/g, "$1.$2,");
+            e.target.value = v;
+        }
+        // moeda
+
+        const pagamentoId = formEditarPgto.dataset.id;
+
+        formEditarPgto.addEventListener('submit', event => {
+            if (!formEditarPgto.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            } else {
+                event.preventDefault();
+
+                const formData = new FormData(formEditarPgto);
+                const data = {};
+
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+
+                console.log('Dados a serem enviados para edição:', data);
+
+                fetch(`/api/pagamentos/${pagamentoId}/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(errorData => {
+                                const errorMessage = typeof errorData === 'object' ? JSON.stringify(errorData) : errorData;
+                                erroModalBody.textContent = `Erro ao editar Pagamento: ${errorMessage}`;
+                                erroModal.show();
+                                throw new Error(JSON.stringify(errorData));
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        console.log('Pagamento editado com sucesso:', result);
+                        sucessoModalBody.textContent = 'Pagamento editado com sucesso!';
+                        sucessoModal.show();
+                        // Opcional: Redirecionar o usuário ou atualizar a interface
+                    })
+                    .catch(error => {
+                        console.error('Erro ao editar Pagamento:', error);
+                        let errorMessage = 'Ocorreu um erro ao editar o Pagamento. Por favor, tente novamente.';
+                        try {
+                            const errorData = JSON.parse(error.message);
+                            errorMessage = `Detalhes do erro: ${JSON.stringify(errorData)}`;
+                            console.log('Detalhes do erro:', errorData);
+                        } catch (e) {
+                            console.log('Erro ao analisar detalhes do erro:', e);
+                            errorMessage = `Ocorreu um erro inesperado: ${error.message}`;
+                        }
+                        erroModalBody.textContent = errorMessage;
+                        erroModal.show();
+                    });
+            }
+            formEditarPgto.classList.add('was-validated');
+        }, false);
+    })();
+</script>
+{% endif %}
+
+<script>
+    document.getElementById('openTratamento').addEventListener('change', function () {
+        const isEditable = this.checked;
+        document.getElementById('tratamento').disabled = !isEditable;
+        document.getElementById('salvarTratamento').disabled = !isEditable;
+    });
+</script>
+<script>
+    (() => {
+        'use strict'
+        const jwtToken = "{{ jwt_token|escapejs }}";
+        const formEditarPgto = document.getElementById('tratamentoForm');
+        const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
+        const erroModalBody = document.getElementById('erroModalBody');
+        const sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
+        const sucessoModalBody = document.getElementById('sucessoModalBody');
+
+        const tratamentoId = formEditarPgto.dataset.id;
+
+        formEditarPgto.addEventListener('submit', event => {
+            if (!formEditarPgto.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            } else {
+                event.preventDefault();
+
+                const formData = new FormData(formEditarPgto);
+                const data = {};
+
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+
+                console.log('Dados a serem enviados para edição:', data);
+
+                fetch(`/api/agendamentos/${tratamentoId}/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + jwtToken,
+                    },
+                    body: JSON.stringify(data),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(errorData => {
+                                const errorMessage = typeof errorData === 'object' ? JSON.stringify(errorData) : errorData;
+                                erroModalBody.textContent = `Erro ao editar Tratamento: ${errorMessage}`;
+                                erroModal.show();
+                                throw new Error(JSON.stringify(errorData));
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        console.log('Tratamento editado com sucesso:', result);
+                        sucessoModalBody.textContent = 'Tratamento editado com sucesso!';
+                        sucessoModal.show();
+                        // Opcional: Redirecionar o usuário ou atualizar a interface
+                    })
+                    .catch(error => {
+                        console.error('Erro ao editar Tratamento:', error);
+                        let errorMessage = 'Ocorreu um erro ao editar o Tratamento. Por favor, tente novamente.';
+                        try {
+                            const errorData = JSON.parse(error.message);
+                            errorMessage = `Detalhes do erro: ${JSON.stringify(errorData)}`;
+                            console.log('Detalhes do erro:', errorData);
+                        } catch (e) {
+                            console.log('Erro ao analisar detalhes do erro:', e);
+                            errorMessage = `Ocorreu um erro inesperado: ${error.message}`;
+                        }
+                        erroModalBody.textContent = errorMessage;
+                        erroModal.show();
+                    });
+            }
+            formEditarPgto.classList.add('was-validated');
+        }, false);
+    })();
+</script>
 {% endblock %}

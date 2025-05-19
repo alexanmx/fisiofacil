@@ -156,15 +156,15 @@
                         return response.json();
                     })
                     .then(result => {
-                        console.log('Cliente criado:', result);
-                        sucessoModalBody.textContent = 'Cliente criado com sucesso!';
+                        console.log('Paciente criado:', result);
+                        sucessoModalBody.textContent = 'Paciente criado com sucesso!';
                         sucessoModal.show();
                         form.reset();
                         form.classList.remove('was-validated');
                     })
                     .catch(error => {
-                        console.error('Erro ao criar Cliente:', error);
-                        let errorMessage = 'Ocorreu um erro ao criar o Cliente. Por favor, tente novamente.';
+                        console.error('Erro ao criar Paciente:', error);
+                        let errorMessage = 'Ocorreu um erro ao criar o Paciente. Por favor, tente novamente.';
                         try {
                             const errorData = JSON.parse(error.message);
                             errorMessage = `Detalhes do erro: ${JSON.stringify(errorData)}`;

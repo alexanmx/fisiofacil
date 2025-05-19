@@ -15,11 +15,12 @@
             <form id="meusAgendamentos" class="needs-validation" novalidate>
                 <div class="row g-3 g-lg-5">
                     <div class="col-md-6 offset-3">
-                        <label for="usuario_cpf" class="form-label f600">CPF*</label>
-                        <input type="text" name="cpf" id="usuario_cpf" class="form-control py-3" placeholder=""
+                        <label for="cpf" class="form-label f600">CPF*</label>
+                        <input type="text" name="cpf" id="cpf" class="form-control py-3" placeholder=""
                             required>
                     </div>
                     <div class="col-12 text-center">
+                        
                         <button type="submit" class="btn btn-success f600 btn-lg">Consultar</button>
                     </div>
                 </div>
@@ -34,12 +35,13 @@
             <form class="d-flex justify-content-between needs-validation" novalidate id="pesquisarCPF">
                 <div class="row row-cols-lg-auto g-3 align-items-center">
                     <div class="col-8" style="position: relative;">
-                        <input type="text" class="form-control border border-secondary" placeholder="Pesquisar"
+                        <input type="text" name="search" class="form-control border border-secondary" placeholder="Pesquisar"
                             style="padding-right: 2.5rem;" required>
                         <i class="bi bi-search"
                             style="position: absolute; right: 0.90rem; top: 50%; transform: translateY(-50%);"></i>
                     </div>
                     <div class="col-4">
+                        <input type="hidden" name="cpf" value="{{ request.GET.cpf|default_if_none:'' }}">
                         <button type="submit" class="btn btn-outline-secondary">Filtrar <i
                                 class="bi bi-filter"></i></button>
                     </div>
