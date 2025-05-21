@@ -19,6 +19,10 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 # ALLOWED_HOSTS = ['fisiofacil.onrender.com']
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://fisiofacil.up.railway.app",
+]
+
 
 # Application definition
 
@@ -48,7 +52,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://fisiofacil-production-041d.up.railway.app/",
+    "https://fisiofacil.up.railway.app",
     "http://127.0.1:8000",
     "http://localhost:8000",
     'https://acessos.vlibras.gov.br',
@@ -88,6 +92,18 @@ DATABASES = {
         'PORT': os.environ.get('PGPORT', '5432'),  # Porta pode ter default, pois é padrão do Postgres
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'railway',
+#         'USER': 'postgres',
+#         'PASSWORD': 'ERBpOVlpLVaAlXVPPTodmDrJdAsUDoAy',
+#         'HOST': 'switchback.proxy.rlwy.net',
+#         'PORT': '53619',  # Porta pode ter default, pois é padrão do Postgres
+#     }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
