@@ -14,10 +14,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-jvj32td*rr7o@!0pi!=xuexd2h*pzylz49-d$j*^ahm5otdg*r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', True)
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 # ALLOWED_HOSTS = ['fisiofacil.onrender.com']
 ALLOWED_HOSTS = ['*']
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://fisiofacil.up.railway.app",
+]
 
 
 # Application definition
@@ -48,7 +52,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://fisiofacil.onrender.com",
+    "https://fisiofacil.up.railway.app",
     "http://127.0.1:8000",
     "http://localhost:8000",
     'https://acessos.vlibras.gov.br',
@@ -78,35 +82,26 @@ WSGI_APPLICATION = 'fisiofacil_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'fisiofacil_api',
-#         'USER': 'default_user',
-#         'PASSWORD': 'default_password',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
-#     }
-# }
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DATABASE_NAME', 'fisiofacil_api'),
-        'USER': os.environ.get('DATABASE_USER', 'fisiofacil_api_user'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'qazkTf4RYgGW4rRzG9YhXxnwUclaToYz'),
-        'HOST': os.environ.get('DATABASE_HOST', 'dpg-d0fo9449c44c73bhanrg-a.oregon-postgres.render.com'),
-        'PORT': os.environ.get('DATABASE_PORT', '5432'), # Define um valor padrão para a porta
+if all(var in os.environ for var in ['PGDATABASE', 'PGUSER', 'PGPASSWORD', 'PGHOST']):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ['PGDATABASE'],
+            'USER': os.environ['PGUSER'],
+            'PASSWORD': os.environ['PGPASSWORD'],
+            'HOST': os.environ['PGHOST'],
+            'PORT': os.environ.get('PGPORT', '5432'),
+        }
     }
-}
+else:
+    # Fallback para SQLite em ambiente de teste/local
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
