@@ -78,33 +78,14 @@ WSGI_APPLICATION = 'fisiofacil_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'fisiofacil_api',
-#         'USER': 'default_user',
-#         'PASSWORD': 'default_password',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
-#     }
-# }
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DATABASE_NAME', 'fisiofacil_api'),
-        'USER': os.environ.get('DATABASE_USER', 'fisiofacil_api_user'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'qazkTf4RYgGW4rRzG9YhXxnwUclaToYz'),
-        'HOST': os.environ.get('DATABASE_HOST', 'dpg-d0fo9449c44c73bhanrg-a.oregon-postgres.render.com'),
-        'PORT': os.environ.get('DATABASE_PORT', '5432'), # Define um valor padrão para a porta
+        'NAME': os.environ['PGDATABASE'],
+        'USER': os.environ['PGUSER'],
+        'PASSWORD': os.environ['PGPASSWORD'],
+        'HOST': os.environ['PGHOST'],
+        'PORT': os.environ.get('PGPORT', '5432'),  # Porta pode ter default, pois é padrão do Postgres
     }
 }
 
