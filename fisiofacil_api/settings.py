@@ -48,7 +48,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://fisiofacil.onrender.com",
+    "https://fisiofacil-production-041d.up.railway.app/",
     "http://127.0.1:8000",
     "http://localhost:8000",
     'https://acessos.vlibras.gov.br',
