@@ -17,30 +17,46 @@
 
     <div id="resultadoTratamentos"></div>
 </div>
-
 <script>
-document.getElementById('formCpf').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const cpf = document.getElementById('cpf').value;
-    const resultadoDiv = document.getElementById('resultadoTratamentos');
-    resultadoDiv.innerHTML = '<div class="text-secondary">Buscando...</div>';
+    (() => {
+        'use strict'
 
-    fetch(`/api/tratamentos-por-cpf/?cpf=${encodeURIComponent(cpf)}`, {
-        headers: {
-            'Authorization': 'Bearer {{ jwt_token|default:"" }}'
+        // CPF
+        const input = document.getElementById("cpf"); console.log(input);
+        input.addEventListener("keyup", formatarCPF);
+        function formatarCPF(e) {
+            var v = e.target.value.replace(/\D/g, "");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            e.target.value = v;
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.detail) {
-            resultadoDiv.innerHTML = `<div class="alert alert-warning">${data.detail}</div>`;
-            return;
-        }
-        if (data.length === 0) {
-            resultadoDiv.innerHTML = '<div class="alert alert-info">Nenhum tratamento encontrado para este CPF.</div>';
-            return;
-        }
-        let html = `
+        // CPF
+    })();
+</script>
+<script>
+    document.getElementById('formCpf').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const cpf = document.getElementById('cpf').value;
+        const resultadoDiv = document.getElementById('resultadoTratamentos');
+        resultadoDiv.innerHTML = '<div class="text-secondary">Buscando...</div>';
+
+        fetch(`/api/tratamentos-por-cpf/?cpf=${encodeURIComponent(cpf)}`, {
+            headers: {
+                'Authorization': 'Bearer {{ jwt_token|default:"" }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.detail) {
+                    resultadoDiv.innerHTML = `<div class="alert alert-warning">${data.detail}</div>`;
+                    return;
+                }
+                if (data.length === 0) {
+                    resultadoDiv.innerHTML = '<div class="alert alert-info">Nenhum tratamento encontrado para este CPF.</div>';
+                    return;
+                }
+                let html = `
             <table class="table table-bordered mt-4">
                 <thead>
                     <tr>
@@ -52,8 +68,8 @@ document.getElementById('formCpf').addEventListener('submit', function(e) {
                 </thead>
                 <tbody>
         `;
-        data.forEach(item => {
-            html += `
+                data.forEach(item => {
+                    html += `
                 <tr>
                     <td>${item.data}</td>
                     <td>${item.hora}</td>
@@ -61,13 +77,13 @@ document.getElementById('formCpf').addEventListener('submit', function(e) {
                     <td>${item.tratamento}</td>
                 </tr>
             `;
-        });
-        html += '</tbody></table>';
-        resultadoDiv.innerHTML = html;
-    })
-    .catch(() => {
-        resultadoDiv.innerHTML = '<div class="alert alert-danger">Erro ao buscar tratamentos.</div>';
+                });
+                html += '</tbody></table>';
+                resultadoDiv.innerHTML = html;
+            })
+            .catch(() => {
+                resultadoDiv.innerHTML = '<div class="alert alert-danger">Erro ao buscar tratamentos.</div>';
+            });
     });
-});
 </script>
 {% endblock %}
