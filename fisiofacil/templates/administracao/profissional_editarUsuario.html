@@ -92,15 +92,12 @@
     (() => {
     'use strict'
 
-    const formEditarUsuario = document.getElementById('editarUsuario'); // Assumindo que o ID do seu formulário de edição é 'editarServico'
+    const formEditarUsuario = document.getElementById('editarUsuario');
     const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
     const erroModalBody = document.getElementById('erroModalBody');
     const sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
     const sucessoModalBody = document.getElementById('sucessoModalBody');
-
-    // Assumindo que o ID do serviço está disponível em algum lugar,
-    // por exemplo, em um atributo data-id do formulário ou em uma variável global.
-    const userId = formEditarUsuario.dataset.id; // Exemplo: <form id="editarServico" data-id="{{ usuario.id }}">
+    const userId = formEditarUsuario.dataset.id;
 
     formEditarUsuario.addEventListener('submit', event => {
         if (!formEditarUsuario.checkValidity()) {
@@ -110,16 +107,16 @@
             event.preventDefault();
 
             const formData = new FormData(formEditarUsuario);
-            const data = {}; // Não precisamos mais da estrutura 'usuario' a menos que a API de edição precise
+            const data = {};
 
             formData.forEach((value, key) => {
-                data[key] = value; // Simplesmente pega todos os dados do formulário
+                data[key] = value;
             });
 
             console.log('Dados a serem enviados para edição:', data);
 
-            fetch(`/api/profissionais/${userId}/`, { // Inclui o ID na URL e muda o método para PUT ou PATCH
-                method: 'PUT', // Ou 'PATCH', dependendo da sua API
+            fetch(`/api/profissionais/${userId}/`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -140,7 +137,6 @@
                     console.log('Serviço editado com sucesso:', result);
                     sucessoModalBody.textContent = 'Serviço editado com sucesso!';
                     sucessoModal.show();
-                    // Opcional: Redirecionar o usuário ou atualizar a interface
                 })
                 .catch(error => {
                     console.error('Erro ao editar Serviço:', error);
