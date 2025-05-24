@@ -96,7 +96,8 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
 
         if 'tratamento' in request.data:
             if request.user != agendamento.profissional_servico.profissional.usuario:
-                raise PermissionDenied("Você não tem permissão para atualizar o campo 'tratamento' deste agendamento.")
+                # raise PermissionDenied("Você não tem permissão para atualizar o campo 'tratamento' deste agendamento.")
+                return Response({"detail": "Você não tem permissão para atualizar o campo 'tratamento' deste agendamento."}, status=status.HTTP_400_BAD_REQUEST)
 
         return super().partial_update(request, *args, **kwargs)
 

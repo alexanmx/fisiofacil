@@ -147,178 +147,108 @@
     </div>
 </div>
 
-{% if agendamento.pagamento.status == 'pendente' %}
 <script>
-    document.getElementById('openPgto').addEventListener('change', function () {
-        const isEditable = this.checked;
-        document.getElementById('formaPagamento').disabled = !isEditable;
-        document.getElementById('statusPagamento').disabled = !isEditable;
-        document.getElementById('salvarPagamento').disabled = !isEditable;
-    });
-</script>
-<script>
-    (() => {
-        'use strict'
+document.addEventListener('DOMContentLoaded', function () {
+    // Instancie os modais uma única vez
+    const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
+    const erroModalBody = document.getElementById('erroModalBody');
+    const sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
+    const sucessoModalBody = document.getElementById('sucessoModalBody');
 
-        const formEditarPgto = document.getElementById('pagamentoForm');
-        const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
-        const erroModalBody = document.getElementById('erroModalBody');
-        const sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
-        const sucessoModalBody = document.getElementById('sucessoModalBody');
-
-        // moeda
-        const inputVALOR = document.getElementById("valorPagamento");
-        inputVALOR.addEventListener("keyup", formatarMoeda);
-        function formatarMoeda(e) {
-            var v = e.target.value.replace(/\D/g, "");
-            v = (v / 100).toFixed(2) + "";
-            v = v.replace(".", ",");
-            v = v.replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,");
-            v = v.replace(/(\d)(\d{3}),/g, "$1.$2,");
-            e.target.value = v;
-        }
-        // moeda
-
-        const pagamentoId = formEditarPgto.dataset.id;
-
-        formEditarPgto.addEventListener('submit', event => {
+    // --- Pagamento ---
+    const formEditarPgto = document.getElementById('pagamentoForm');
+    const openPgto = document.getElementById('openPgto');
+    if (openPgto) {
+        openPgto.addEventListener('change', function () {
+            const isEditable = this.checked;
+            document.getElementById('formaPagamento').disabled = !isEditable;
+            document.getElementById('statusPagamento').disabled = !isEditable;
+            document.getElementById('salvarPagamento').disabled = !isEditable;
+        });
+    }
+    if (formEditarPgto) {
+        formEditarPgto.addEventListener('submit', function (event) {
+            event.preventDefault();
             if (!formEditarPgto.checkValidity()) {
-                event.preventDefault();
                 event.stopPropagation();
             } else {
-                event.preventDefault();
-
-                const formData = new FormData(formEditarPgto);
-                const data = {};
-
-                formData.forEach((value, key) => {
-                    data[key] = value;
-                });
-
-                console.log('Dados a serem enviados para edição:', data);
-
+                const pagamentoId = formEditarPgto.dataset.id;
+                const data = {
+                    metodo_pagamento: document.getElementById('formaPagamento').value,
+                    status: document.getElementById('statusPagamento').value
+                };
                 fetch(`/api/pagamentos/${pagamentoId}/`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data),
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.json().then(errorData => {
-                                const errorMessage = typeof errorData === 'object' ? JSON.stringify(errorData) : errorData;
-                                erroModalBody.textContent = `Erro ao editar Pagamento: ${errorMessage}`;
-                                erroModal.show();
-                                throw new Error(JSON.stringify(errorData));
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then(result => {
-                        console.log('Pagamento editado com sucesso:', result);
-                        sucessoModalBody.textContent = 'Pagamento editado com sucesso!';
-                        sucessoModal.show();
-                        // Opcional: Redirecionar o usuário ou atualizar a interface
-                    })
-                    .catch(error => {
-                        console.error('Erro ao editar Pagamento:', error);
-                        let errorMessage = 'Ocorreu um erro ao editar o Pagamento. Por favor, tente novamente.';
-                        try {
-                            const errorData = JSON.parse(error.message);
-                            errorMessage = `Detalhes do erro: ${JSON.stringify(errorData)}`;
-                            console.log('Detalhes do erro:', errorData);
-                        } catch (e) {
-                            console.log('Erro ao analisar detalhes do erro:', e);
-                            errorMessage = `Ocorreu um erro inesperado: ${error.message}`;
-                        }
-                        erroModalBody.textContent = errorMessage;
-                        erroModal.show();
-                    });
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errorData => {
+                            erroModalBody.textContent = `Erro ao editar Pagamento: ${JSON.stringify(errorData)}`;
+                            erroModal.show();
+                            throw new Error();
+                        });
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    sucessoModalBody.textContent = 'Pagamento editado com sucesso!';
+                    sucessoModal.show();
+                })
+                .catch(() => {});
             }
             formEditarPgto.classList.add('was-validated');
-        }, false);
-    })();
-</script>
-{% endif %}
+        });
+    }
 
-<script>
-    document.getElementById('openTratamento').addEventListener('change', function () {
-        const isEditable = this.checked;
-        document.getElementById('tratamento').disabled = !isEditable;
-        document.getElementById('salvarTratamento').disabled = !isEditable;
-    });
-</script>
-<script>
-    (() => {
-        'use strict'
-        const jwtToken = "{{ jwt_token|escapejs }}";
-        const formEditarPgto = document.getElementById('tratamentoForm');
-        const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
-        const erroModalBody = document.getElementById('erroModalBody');
-        const sucessoModal = new bootstrap.Modal(document.getElementById('sucessoModal'));
-        const sucessoModalBody = document.getElementById('sucessoModalBody');
-
-        const tratamentoId = formEditarPgto.dataset.id;
-
-        formEditarPgto.addEventListener('submit', event => {
-            if (!formEditarPgto.checkValidity()) {
-                event.preventDefault();
+    // --- Tratamento ---
+    const formEditarTratamento = document.getElementById('tratamentoForm');
+    const openTratamento = document.getElementById('openTratamento');
+    if (openTratamento) {
+        openTratamento.addEventListener('change', function () {
+            const isEditable = this.checked;
+            document.getElementById('tratamento').disabled = !isEditable;
+            document.getElementById('salvarTratamento').disabled = !isEditable;
+        });
+    }
+    if (formEditarTratamento) {
+        formEditarTratamento.addEventListener('submit', function (event) {
+            event.preventDefault();
+            if (!formEditarTratamento.checkValidity()) {
                 event.stopPropagation();
             } else {
-                event.preventDefault();
-
-                const formData = new FormData(formEditarPgto);
-                const data = {};
-
-                formData.forEach((value, key) => {
-                    data[key] = value;
-                });
-
-                console.log('Dados a serem enviados para edição:', data);
-
+                const tratamentoId = formEditarTratamento.dataset.id;
+                const data = {
+                    tratamento: document.getElementById('tratamento').value
+                };
                 fetch(`/api/agendamentos/${tratamentoId}/`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + jwtToken,
+                        'Authorization': 'Bearer {{ jwt_token|escapejs }}',
                     },
                     body: JSON.stringify(data),
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.json().then(errorData => {
-                                const errorMessage = typeof errorData === 'object' ? JSON.stringify(errorData) : errorData;
-                                erroModalBody.textContent = `Erro ao editar Tratamento: ${errorMessage}`;
-                                erroModal.show();
-                                throw new Error(JSON.stringify(errorData));
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then(result => {
-                        console.log('Tratamento editado com sucesso:', result);
-                        sucessoModalBody.textContent = 'Tratamento editado com sucesso!';
-                        sucessoModal.show();
-                        // Opcional: Redirecionar o usuário ou atualizar a interface
-                    })
-                    .catch(error => {
-                        console.error('Erro ao editar Tratamento:', error);
-                        let errorMessage = 'Ocorreu um erro ao editar o Tratamento. Por favor, tente novamente.';
-                        try {
-                            const errorData = JSON.parse(error.message);
-                            errorMessage = `Detalhes do erro: ${JSON.stringify(errorData)}`;
-                            console.log('Detalhes do erro:', errorData);
-                        } catch (e) {
-                            console.log('Erro ao analisar detalhes do erro:', e);
-                            errorMessage = `Ocorreu um erro inesperado: ${error.message}`;
-                        }
-                        erroModalBody.textContent = errorMessage;
-                        erroModal.show();
-                    });
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errorData => {
+                            erroModalBody.textContent = `Erro ao editar Tratamento: ${JSON.stringify(errorData.detail)}`;
+                            erroModal.show();
+                            throw new Error();
+                        });
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    sucessoModalBody.textContent = 'Tratamento editado com sucesso!';
+                    sucessoModal.show();
+                })
+                .catch(() => {});
             }
-            formEditarPgto.classList.add('was-validated');
-        }, false);
-    })();
+            formEditarTratamento.classList.add('was-validated');
+        });
+    }
+});
 </script>
 {% endblock %}
