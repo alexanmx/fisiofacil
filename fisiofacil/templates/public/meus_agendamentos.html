@@ -14,7 +14,7 @@
         <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
             <form id="meusAgendamentos" class="needs-validation" novalidate>
                 <div class="row g-3 g-lg-5">
-                    <div class="col-md-6 offset-3">
+                    <div class="col-md-6 offset-md-3">
                         <label for="cpf" class="form-label f600">CPF*</label>
                         <input type="text" name="cpf" id="cpf" class="form-control py-3" placeholder=""
                             required>
@@ -130,7 +130,6 @@
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    // Adicione o Authorization se necessário
                 },
                 body: JSON.stringify(data),
             })

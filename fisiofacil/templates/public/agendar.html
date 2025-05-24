@@ -144,7 +144,6 @@
                         try {
                             const errorData = JSON.parse(error.message);
                             errorMessage = errorData.non_field_errors;
-                            // concatenar error mensagem com link para se cadastrar
                             errorMessage += '<p class="pt-4">Se você não possui cadastro, faça seu cadastro <a href="/cadastrar/">aqui</a>.</p>';
                             console.log('Detalhes do erro:', errorData);
                         } catch (e) {
@@ -159,7 +158,6 @@
         }, false);
     })();
 
-    // Seleciona o serviço se existir o parâmetro 's' na URL
     document.addEventListener('DOMContentLoaded', function () {
         const urlParams = new URLSearchParams(window.location.search);
         const s = urlParams.get('service');

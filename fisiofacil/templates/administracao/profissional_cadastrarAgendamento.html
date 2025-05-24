@@ -11,32 +11,33 @@
 <div class="container-lg my-5">
     <div class="row">
         <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
-            <form id="cadastrarAgendamento" class="row g-5">
-                <div class="col-12">
-                    <label for="profissional_servico" class="form-label f600">Serviço*</label>
-                    <select name="profissional_servico" id="profissional_servico" class="form-select py-3">
-                        <option value="" selected disabled>Selecione um serviço</option>
-                        {% for ps in profissional_servicos %}
-                        <option value="{{ ps.id }}">{{ ps.profissional.nome }} - {{ ps.servico.nome }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="data" class="form-label f600">Data*</label>
-                    <input type="date" name="data" id="data" class="form-control py-3">
-                </div>
-                <div class="col-md-6">
-                    <label for="hora" class="form-label f600">Horário*</label>
-                    <input type="time" name="hora" id="hora" class="form-control py-3">
-                </div>
-                <div class="col-md-12">
-                    <label for="cliente_cpf" class="form-label f600">CPF*</label>
-                    <input type="text" name="cpf" id="cliente_cpf" class="form-control py-3" placeholder="" required>
-                </div>
-
-                <div class="col-12 text-center">
-                    <input type="hidden" name="status" id="status" value="agendado">
-                    <button type="submit" class="btn btn-adm btn-lg f600">Agendar</button>
+            <form id="cadastrarAgendamento" class="needs-validation" novalidate>
+                <div class="row g-5">
+                    <div class="col-12">
+                        <label for="profissional_servico" class="form-label f600">Serviço*</label>
+                        <select name="profissional_servico" id="profissional_servico" class="form-select py-3">
+                            <option value="" selected disabled>Selecione um serviço</option>
+                            {% for ps in profissional_servicos %}
+                            <option value="{{ ps.id }}">{{ ps.profissional.nome }} - {{ ps.servico.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="data" class="form-label f600">Data*</label>
+                        <input type="date" name="data" id="data" class="form-control py-3">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="hora" class="form-label f600">Horário*</label>
+                        <input type="time" name="hora" id="hora" class="form-control py-3">
+                    </div>
+                    <div class="col-md-12">
+                        <label for="cliente_cpf" class="form-label f600">CPF*</label>
+                        <input type="text" name="cpf" id="cliente_cpf" class="form-control py-3" placeholder="" required>
+                    </div>
+                    <div class="col-12 text-center">
+                        <input type="hidden" name="status" id="status" value="agendado">
+                        <button type="submit" class="btn btn-adm btn-lg f600">Agendar</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -144,7 +145,6 @@
                         try {
                             const errorData = JSON.parse(error.message);
                             errorMessage = errorData.non_field_errors;
-                            // concatenar error mensagem com link para se cadastrar
                             errorMessage += '<p class="pt-4">Se você não possui cadastro, faça seu cadastro <a href="/cadastrar/">aqui</a>.</p>';
                             console.log('Detalhes do erro:', errorData);
                         } catch (e) {
