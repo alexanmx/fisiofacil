@@ -132,12 +132,14 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
                     Q(cliente__nome__icontains=search_query)
                 )
         else:
-            try:
-                profissional = Profissional.objects.get(usuario=request.user)
-            except Profissional.DoesNotExist:
-                return Response({"detail": "Profissional não encontrado."}, status=status.HTTP_404_NOT_FOUND)
-            queryset = Agendamento.objects.filter(profissional_servico__profissional=profissional)
-            print("cai no else")
+            # try:
+            #     profissional = Profissional.objects.get(usuario=request.user)
+            # except Profissional.DoesNotExist:
+            #     return Response({"detail": "Profissional não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+            # queryset = Agendamento.objects.filter(profissional_servico__profissional=profissional)
+            # print("cai no else")
+            queryset = self.queryset
+            search_query = request.GET.get('search', '')
 
         page = self.paginate_queryset(queryset)
         if page is not None:
