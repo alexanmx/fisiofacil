@@ -425,6 +425,13 @@ def editarServicoAdm(request, servico_id):
         response = requests.get(api_url)
         if response.status_code == 200:
             servico = response.json()
+            duracao = servico.get('duracao')
+
+            if duracao:
+                servico['duracao_str'] = duracao[:5]
+            else:
+                servico['duracao_str'] = ''
+            
             return render(request, 'administracao/profissional_editarServico.html', {'servico': servico})
         else:
             return HttpResponse("Serviço não encontrado", status=404)

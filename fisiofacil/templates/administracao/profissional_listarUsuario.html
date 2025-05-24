@@ -37,10 +37,8 @@
                                     <th scope="col">E-mail</th>
                                     <th scope="col">Telefone</th>
                                     <th scope="col">Especialidade</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Data de Criação</th>
-                                    <th scope="col">Data de Alteração</th>
-                                    <th scope="col">Ação</th>
+                                    <th scope="col">Perfil</th>
+                                    <th scope="col" style="min-width: 185px;">Ação</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -51,10 +49,7 @@
                                     <td>{{ usuario.email }}</td>
                                     <td>{{ usuario.telefone }}</td>
                                     <td>{{ usuario.especialidade }}</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>
+                                    
                                     <td>
                                         {% if usuario.usuario.is_superuser %}
                                         <span class="badge bg-success">Administrador</span>
@@ -62,10 +57,9 @@
                                         <span class="badge bg-secondary">Usuário</span>
                                         {% endif %}
                                     </td>
-                                    </td>
                                     <td>
                                         <a href="{% url 'editarUsuarioAdm' usuario.id %}"
-                                            class="btn btn-primary btn-sm me-2"><i class="bi bi-pencil"></i> Editar</a>
+                                            class="btn btn-primary btn-sm me-1"><i class="bi bi-pencil"></i> Editar</a>
                                         <button class="btn btn-danger btn-sm btn-excluir-usuario"
                                             data-id="{{ usuario.id }}"><i class="bi bi-trash"></i> Excluir</button>
                                     </td>
@@ -119,7 +113,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         'use strict'
 
-        // Obtenha as referências aos elementos do modal FORA do fetch
         const erroModalElement = document.getElementById('erroModal');
         const erroModal = erroModalElement ? new bootstrap.Modal(erroModalElement) : null;
         const erroModalBody = document.getElementById('erroModalBody');
@@ -144,7 +137,6 @@
                                 sucessoModalBody.textContent = 'profissional excluído com sucesso!';
                                 sucessoModal.show();
                             }
-                            // Opcional: Recarregue a lista de profissionals ou remova o item da UI
                         } else {
                             return response.json().then(errorData => {
                                 console.error(`Erro ao excluir profissional com ID ${profissionalId}:`, errorData);

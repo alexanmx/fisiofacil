@@ -37,7 +37,6 @@
                                     <th scope="col">Serviço</th>
                                     <th scope="col">Profissional</th>
                                     <th scope="col">Status</th>
-                                    <th scope="col">Ação</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -53,7 +52,6 @@
                                             <span class="badge bg-secondary">Desconhecido</span>
                                         {% endif %}
                                     </td>
-                                    <td></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -102,7 +100,6 @@
     document.addEventListener('DOMContentLoaded', () => {
     'use strict'
 
-    // Obtenha as referências aos elementos do modal FORA do fetch
     const erroModalElement = document.getElementById('erroModal');
     const erroModal = erroModalElement ? new bootstrap.Modal(erroModalElement) : null;
     const erroModalBody = document.getElementById('erroModalBody');
@@ -127,7 +124,6 @@
                         sucessoModalBody.textContent = 'profissional excluído com sucesso!';
                         sucessoModal.show();
                     }
-                    // Opcional: Recarregue a lista de profissionals ou remova o item da UI
                 } else {
                     return response.json().then(errorData => {
                         console.error(`Erro ao excluir profissional com ID ${profissionalId}:`, errorData);

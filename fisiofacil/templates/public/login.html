@@ -79,7 +79,6 @@
 
         var formData = new FormData(event.target);
 
-        // Referências corretas aos elementos do modal e spinner
         const erroModalBody = document.getElementById("erroModalBody");
         const erroModal = new bootstrap.Modal(document.getElementById('erroModal'));
         const spinner = event.target.querySelector('.spinner-border');
@@ -92,7 +91,6 @@
             body: formData,
         })
             .then(response => {
-                // Oculta o spinner ao receber a resposta
                 spinner.classList.add('d-none');
                 if (response.ok) {
                     window.location.href = "{% url 'indexAdm' %}";
@@ -113,7 +111,6 @@
                 }
             })
             .catch(error => {
-                // Oculta o spinner em caso de erro
                 spinner.classList.add('d-none');
                 console.error("An error occurred:", error);
                 let errorMessage = 'Ocorreu um erro ao tentar fazer login. Por favor, tente novamente.';

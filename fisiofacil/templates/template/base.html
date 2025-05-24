@@ -28,12 +28,22 @@
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
 
+    <style>
+        #main-footer.fixed-bottom {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1030;
+        }
+    </style>
+
+    <link rel="icon" href="{% static 'images/favicon.ico' %}">
 
 </head>
 
 <body class="">
 
-    <!-- se usuario estiver autenticado include menu2.html -->
     {% if user.is_authenticated %}
     {% include 'template/menu_profissional.html' %}
     {% else %}
@@ -44,7 +54,7 @@
         {% block conteudo %}{% endblock %}
     </main>
 
-    <footer class="py-4 mt-auto">
+    <footer class="py-4" id="main-footer">
         <p class="text-center second-text-color f600 my-0 py-0 small">© 2025 Todos os Direitos Reservados</p>
     </footer>
 
@@ -63,25 +73,19 @@
 
 
     <script>
-        // Obtém a URL atual
         const urlAtual = window.location.pathname;
-
-        // Seleciona todos os links do menu
         const links = document.querySelectorAll('.nav-link');
 
-        // Adiciona a classe 'active' ao link correspondente à rota atual
         links.forEach(link => {
             if (link.getAttribute('href') === urlAtual) {
                 link.classList.add('active');
             }
         });
 
-        // Adiciona a classe 'teste' ao header se a rota for '/servicos/' ou '/contato/'
         const header = document.querySelector('header');
         const body = document.querySelector('body');
         const main = document.querySelector('main');
 
-        // se a rota for a home aplica a classe 'teste' ao header, se for servicos ou contatos, aplica a classe 'teste2' ou se for outras aplica a classe 'teste3'
         if (urlAtual === '/') {
             header.classList.add('menu-default');
         } else if (urlAtual === '/servicos/' || urlAtual === '/agendar/') {
@@ -95,6 +99,19 @@
             body.classList.add('dark');
             header.classList.add('menu-dark2');
         }
+    </script>
+
+    <script>
+        function ajustarFooter() {
+            const footer = document.getElementById('main-footer');
+            footer.classList.remove('fixed-bottom');
+
+            if (document.body.scrollHeight <= window.innerHeight) {
+                footer.classList.add('fixed-bottom');
+            }
+        }
+        window.addEventListener('load', ajustarFooter);
+        window.addEventListener('resize', ajustarFooter);
     </script>
 </body>
 
