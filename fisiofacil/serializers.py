@@ -41,7 +41,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
         return user
 
 class ProfissionalSerializer(serializers.ModelSerializer):
-    usuario = UsuarioSerializer()
+    usuario = UsuarioSerializer(required=False)
 
     class Meta:
         model = Profissional
